@@ -24,9 +24,11 @@ export function Header() {
           <Link href="/contact" className="hover:underline">
             Kontakt
           </Link>
-          <Link href="/mkrosetid" className="hover:underline">
+          {/*
+          /<Link href="/mkrosetid" className="hover:underline">
             MK rosetid
           </Link>
+          */}
         </nav>
       </div>
     </header>
