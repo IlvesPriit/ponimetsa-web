@@ -14,42 +14,47 @@ type Service = {
 
 const services: readonly Service[] = [
     {
-      title: "🐴 Ratsatrennid lastele",
+      title: "🐴 Ratsatrennid lastele ja täiskasvanutele",
       image: "/images/services/service1.jpeg",
       intro:
-        "Ootame lapsi ratsatrenni! Algõppesse ootame alates 6-aastaseid lapsi, väiksematele pakume käekõrval ponisõitu.",
+        "Pakume treeninguid nii alustavatele kui ka edasijõudnud ratsanikele – lastest täiskasvanuteni.",
       bullets: [
-        "Algõppe eratrenn – 30 €",
-        "Käekõrval ponisõit (30 min) – 20 €",
-        "Treener: EKR3 ratsatreener Mariann-Krõõt Ilves",
+        "Grupitreeningud lastele ja täiskasvanutele (ka võistlemise võimalus)",
+        "Lepinguline kuumaks 6 kuuks",
+        "Korrakaardid: 5x ja 10x kaart kehtivusega 2 kuud",
+        "Ühekordne tasu võimalus",
+        "Eratreeningud edasijõudnutele – kuni 2 õpilast korraga",
+        "Algõpe lastele ja täiskasvanutele – alustavatele õpilastele, lapsed alates 6. eluaastast",
+        "Maastikusõit – 1 h ratsutamist metsaradadel vastavalt sõitja oskustele",
       ],
+      note: "Treener Mariann-Krõõt Ilves (EKR3 tase).",
     },
     {
-      title: "🦄 Ponitunnid väikelastele",
+      title: "🦄 Väikelastele",
       image: "/images/services/service2.jpeg",
       intro:
-        "Vahvad ponitunnid lastele, kes soovivad hobustega sõbraks saada ja tallielu tundma õppida. Sobib alates 5. eluaastast (nooremad koos lapsevanemaga).",
+        "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
-        "Tutvume talliga ja vaatame, kus ponid elavad",
-        "Saame teada, mida ponid söövad",
-        "Harjame ja saduldame poni",
-        "Iga laps saab ~5 min ponisõidu",
-        "Tunni lõpus anname ponidele porgandit",
-        "Hind: 10 € / laps; iga järgmine sama pere laps 5 €",
+        "Ponisõit juhendaja käekõrval – alates 10 minutist",
+        "5 min / 5 € ja 30 min / 20 €",
+        "Väikese ponisõbra trenn – poni harjamise ja saduldamise õppimine + kuni 15 min ponisõitu (25 € / kord)",
+        "Ponitunnid väikelaste gruppidele – tutvume talli ja ponidega, vaatame mida ponid söövad, harjame ja saduldame poni ning saame sõita",
       ],
-      note: "Ponitundide toimumisaegadel hoia pilk peal meie Facebooki lehel. Eraürituste jaoks võta ühendust.",
+      note: "Ponitundide toimumisajad lisame oma sotsiaalmeediakontodele. Võimalik tellida ka eraüritus – võta meiega ühendust.",
     },
     {
-      title: "🐎 Boksi koht hobusele",
+      title: "🐎 Hobuse pidamisteenus",
       image: "/images/services/service3.jpeg",
       intro:
-        "Pakume pidamiskohti märale või ruunale. Sobib noorele kasvavale hobusele, pensionärile või harrastushobusele.",
+        "Pakume nii lühi- kui pikaajalisi pidamiskohti ruunale või märale boksiüüri vormis.",
       bullets: [
-        "Päeval on hobune ilmast sõltuvalt võimalikult kaua õues",
-        "Ööseks 3 × 4 m boks",
-        "Hobi korras võimalik ratsutada ja hüpata",
-        "Soovi korral treeneri trennid ka kohapeal",
-        "Hoolitseme sinu hobuse eest sama hoolega nagu enda oma",
+        "Päeval on hobused vastavalt ilmale võimalikult kaua õues ja öösel 3 × 4 m boksis",
+        "Teenuses sisaldub hein või silo, vesi, sool boksis ja kindel boksikoht",
+        "Lisaks boksi koristamine, kopeldamine ja sõiduplatsi kasutamine",
+        "Soovi korral 1× päevas jõusööda andmine (sööt hobuomaniku poolt)",
+        "Vajadusel talvisel perioodil tekitamine",
+        "Hobuse majutus lühiajaliselt – 25 € / 24 h",
+        "Hobuse majutus pikaajaliselt – 200 € / kuu",
       ],
     },
   ];
@@ -150,7 +155,7 @@ export default function HomePage() {
             </div>
             <div className="rounded-2xl border bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-neutral-950">
               <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">Hea ligipääs</div>
-              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">13 min Pärnust, bussipeatus ~400 m.</div>
+              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">13 min Pärnu kesklinnast, bussipeatus ~400 m.</div>
             </div>
           </div>
           <div className="mt-8 flex justify-center">
