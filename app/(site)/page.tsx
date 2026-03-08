@@ -15,7 +15,7 @@ type Service = {
 const services: readonly Service[] = [
     {
       title: "🐴 Ratsatrennid lastele ja täiskasvanutele",
-      image: "/images/services/service1.jpeg",
+      image: "/images/services/service1.jpg",
       intro:
         "Pakume treeninguid nii alustavatele kui ka edasijõudnud ratsanikele – lastest täiskasvanuteni.",
       bullets: [
@@ -31,7 +31,7 @@ const services: readonly Service[] = [
     },
     {
       title: "🦄 Väikelastele",
-      image: "/images/services/service2.jpeg",
+      image: "/images/services/service2.jpg",
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
@@ -44,7 +44,7 @@ const services: readonly Service[] = [
     },
     {
       title: "🐎 Hobuse pidamisteenus",
-      image: "/images/services/service3.jpeg",
+      image: "/images/services/service3.jpg",
       intro:
         "Pakume nii lühi- kui pikaajalisi pidamiskohti ruunale või märale boksiüüri vormis.",
       bullets: [
