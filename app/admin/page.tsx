@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { createClient } from "../../lib/supabase/server";
+import { requireAdmin } from "../../lib/admin";
 
 export default async function AdminPage() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  await requireAdmin("/admin");
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16">
