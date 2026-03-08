@@ -17,7 +17,7 @@ const services: readonly Service[] = [
     {
       title: "🐴 Ratsatrennid lastele ja täiskasvanutele",
       image: "/images/services/service1.jpg",
-      imageClassName: "object-[center_22%]",
+      imageClassName: "object-[center_3%]",
       intro:
         "Pakume treeninguid nii alustavatele kui ka edasijõudnud ratsanikele – lastest täiskasvanuteni.",
       bullets: [
@@ -34,7 +34,7 @@ const services: readonly Service[] = [
     {
       title: "🦄 Väikelastele",
       image: "/images/services/service2.jpg",
-      imageClassName: "object-[center_18%]",
+      imageClassName: "object-[center_33%]",
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
@@ -185,7 +185,7 @@ export default function HomePage() {
     <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {services.map((s) => (
         <div key={s.title} className="overflow-hidden rounded-2xl border bg-white shadow-sm dark:bg-neutral-950">
-          <div className="relative h-44 w-full">
+          <div className="relative h-52 w-full">
             <Image
               src={s.image}
               alt={s.title}
