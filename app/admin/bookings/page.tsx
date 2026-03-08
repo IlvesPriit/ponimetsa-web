@@ -3,6 +3,9 @@ import { createClient } from "../../../lib/supabase/server";
 import { pool } from "../../../lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "../../../lib/admin";
+
+
 
 // --- Email helpers (Resend) ---
 type SendEmailArgs = {
@@ -79,6 +82,7 @@ function fmtEtRange(start?: Date | null, end?: Date | null) {
 export default async function AdminBookingsPage() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  await requireAdmin("/admin/bookings");
 
   let bookings: any[] = [];
 

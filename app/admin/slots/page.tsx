@@ -3,6 +3,8 @@ import { createClient } from "../../../lib/supabase/server";
 import { pool } from "../../../lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "../../../lib/admin";
+
 
 function daysInMonth(year: number, month1to12: number) {
   return new Date(year, month1to12, 0).getDate();
@@ -54,6 +56,8 @@ export default async function AdminSlotsPage({
 }: {
   searchParams?: Promise<{ saved?: string; cleaned?: string }>;
 }) {
+  await requireAdmin("/admin/slots");
+
   const params = (await searchParams) ?? {};
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
@@ -512,4 +516,3 @@ export default async function AdminSlotsPage({
     </div>
   );
 }
-                  {/* Service title removed */}
