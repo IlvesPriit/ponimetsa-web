@@ -10,12 +10,14 @@ type Service = {
   intro: string;
   bullets: string[];
   note?: string;
+  imageClassName?: string;
 };
 
 const services: readonly Service[] = [
     {
       title: "🐴 Ratsatrennid lastele ja täiskasvanutele",
       image: "/images/services/service1.jpg",
+      imageClassName: "object-[center_22%]",
       intro:
         "Pakume treeninguid nii alustavatele kui ka edasijõudnud ratsanikele – lastest täiskasvanuteni.",
       bullets: [
@@ -32,6 +34,7 @@ const services: readonly Service[] = [
     {
       title: "🦄 Väikelastele",
       image: "/images/services/service2.jpg",
+      imageClassName: "object-[center_18%]",
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
@@ -183,7 +186,12 @@ export default function HomePage() {
       {services.map((s) => (
         <div key={s.title} className="overflow-hidden rounded-2xl border bg-white shadow-sm dark:bg-neutral-950">
           <div className="relative h-44 w-full">
-            <Image src={s.image} alt={s.title} fill className="object-cover" />
+            <Image
+              src={s.image}
+              alt={s.title}
+              fill
+              className={s.imageClassName ? `object-cover ${s.imageClassName}` : "object-cover"}
+            />
           </div>
 
           <div className="p-6">
@@ -283,14 +291,14 @@ export default function HomePage() {
                 <div>
                   <div className="font-medium text-gray-900 dark:text-gray-100">Telefon</div>
                   <a href="tel:+372" className="hover:underline">
-                    +372 …
+                    +372 5696 8282
                   </a>
                 </div>
 
                 <div>
                   <div className="font-medium text-gray-900 dark:text-gray-100">E-post</div>
-                  <a href="mailto:info@ponimetsatall.ee" className="hover:underline">
-                    info@ponimetsatall.ee
+                  <a href="mailto:ponimetsa@hotmail.com" className="hover:underline">
+                  ponimetsa@hotmail.com
                   </a>
                 </div>
 
