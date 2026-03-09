@@ -4,11 +4,18 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { FacebookPagePlugin } from "@/components/site/FacebookPagePlugin";
 
+type ServiceBullet =
+  | string
+  | {
+      text: string;
+      children: string[];
+    };
+
 type Service = {
   title: string;
   image: string;
   intro: string;
-  bullets: string[];
+  bullets: ServiceBullet[];
   note?: string;
   imageClassName?: string;
 };
@@ -21,10 +28,14 @@ const services: readonly Service[] = [
       intro:
         "Pakume treeninguid nii alustavatele kui ka edasijõudnud ratsanikele – lastest täiskasvanuteni.",
       bullets: [
-        "Grupitreeningud lastele ja täiskasvanutele (ka võistlemise võimalus)",
-        "Lepinguline kuumaks 6 kuuks",
-        "Korrakaardid: 5x ja 10x kaart kehtivusega 2 kuud",
-        "Ühekordne tasu võimalus",
+        {
+          text: "Grupitreeningud lastele ja täiskasvanutele (ka võistlemise võimalus)",
+          children: [
+            "Lepinguline kuumaks 6 kuuks",
+            "Korrakaardid: 5x ja 10x kaart kehtivusega 2 kuud",
+            "Ühekordne tasu võimalus",
+          ],
+        },
         "Eratreeningud edasijõudnutele – kuni 2 õpilast korraga",
         "Algõpe lastele ja täiskasvanutele – alustavatele õpilastele, lapsed alates 6. eluaastast",
         "Maastikusõit – 1 h ratsutamist metsaradadel vastavalt sõitja oskustele",
@@ -38,8 +49,7 @@ const services: readonly Service[] = [
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
-        "Ponisõit juhendaja käekõrval – alates 10 minutist",
-        "5 min / 5 € ja 30 min / 20 €",
+        "Ponisõit juhendaja käekõrval – alates 10 minutist (5 min / 5 € ja 30 min / 20 €)",
         "Väikese ponisõbra trenn – poni harjamise ja saduldamise õppimine + kuni 15 min ponisõitu (25 € / kord)",
         "Ponitunnid väikelaste gruppidele – tutvume talli ja ponidega, vaatame mida ponid söövad, harjame ja saduldame poni ning saame sõita",
       ],
@@ -204,9 +214,22 @@ export default function HomePage() {
             </p>
 
             <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 dark:text-gray-300">
-              {s.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
+              {s.bullets.map((b) => {
+                if (typeof b === "string") {
+                  return <li key={b}>{b}</li>;
+                }
+
+                return (
+                  <li key={b.text}>
+                    {b.text}
+                    <ul className="mt-2 list-none space-y-1 pl-4 text-sm text-gray-600 dark:text-gray-400">
+                      {b.children.map((child) => (
+                        <li key={child}>– {child}</li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              })}
             </ul>
 
             {s.note && (
@@ -230,7 +253,7 @@ export default function HomePage() {
         href="/services"
         className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
       >
-        Vaata kõiki teenuseid →
+        Vaata kogu hinnakirja →
       </Link>
     </div>
   </div>
@@ -241,7 +264,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-3xl px-4 py-16">
             <h2 className="text-3xl font-semibold text-gray-900">Uudised ja postitused</h2>
             <p className="mt-2 text-gray-700">
-            Viimased postitused otse sotsiaalmeediast.
+            Viimased postitused sotsiaalmeediast.
             </p>
 
             <div className="mt-8 grid gap-6">
