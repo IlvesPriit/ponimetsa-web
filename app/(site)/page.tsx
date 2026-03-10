@@ -128,7 +128,7 @@ export default function HomePage() {
       </h1>
 
       <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90 sm:text-xl">
-        Kodune ja looduslähedane koht hobustele Reiu külas, Pärnumaal.
+      Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!
       </p>
 
     </div>
