@@ -1,14 +1,14 @@
 export default function AboutPage() {
   return (
-    <div className="bg-white dark:bg-neutral-950">
+    <div className="bg-white">
       <div className="mx-auto max-w-4xl px-4 py-16">
         {/* Title */}
-        <h1 className="text-4xl font-semibold text-gray-900 dark:text-gray-100">
+        <h1 className="text-4xl font-semibold text-gray-900">
           Ponimetsa talli lugu
         </h1>
 
         {/* Intro */}
-        <div className="mt-8 space-y-5 text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+        <div className="mt-8 space-y-5 text-lg leading-relaxed text-gray-700">
           <p>
             Ponimetsa talli eestvedaja ja treener on Mariann-Krõõt Ilves, kellel on üle
             20-aastane kogemus hobu- ja ratsamaailmas. Mariann alustas ratsatreeninguid
@@ -29,13 +29,13 @@ export default function AboutPage() {
 
         {/* Why choose Ponimetsa Tall */}
         <section className="mt-14 space-y-8">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-semibold text-gray-900">
             Miks valida Ponimetsa tall?
           </h2>
 
-          <div className="space-y-6 text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+          <div className="space-y-6 text-lg leading-relaxed text-gray-700">
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900">
                 Atesteeritud treener ja põnevad treeningud
               </h3>
               <p className="mt-2">
@@ -50,7 +50,7 @@ export default function AboutPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900">
                 Pikaaegne kogemus ratsamaailmas
               </h3>
               <p className="mt-2">
@@ -61,7 +61,7 @@ export default function AboutPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900">
                 Pidev areng
               </h3>
               <p className="mt-2">
@@ -75,7 +75,7 @@ Ka talli ja treeningtingimuste pidev parendamine on meie jaoks oluline. Seega te
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900">
                 Personaalsus
               </h3>
               <p className="mt-2">
@@ -87,7 +87,7 @@ Ka talli ja treeningtingimuste pidev parendamine on meie jaoks oluline. Seega te
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="font-semibold text-gray-900">
                 Hea ligipääs
               </h3>
               <p className="mt-2">
@@ -100,8 +100,8 @@ Ka talli ja treeningtingimuste pidev parendamine on meie jaoks oluline. Seega te
         </section>
 
         {/* Why riding */}
-        <section className="mt-14 space-y-6 text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+        <section className="mt-14 space-y-6 text-lg leading-relaxed text-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-900">
             Miks valida ratsutamine?
           </h2>
 
@@ -121,7 +121,7 @@ Ka talli ja treeningtingimuste pidev parendamine on meie jaoks oluline. Seega te
             võhikute seas levinud arvamus justkui ratsutamine ei ole sport.
           </p>
 
-          <blockquote className="border-l-4 border-amber-700 pl-4 italic text-gray-800 dark:text-gray-200">
+          <blockquote className="border-l-4 border-amber-700 pl-4 italic text-gray-800">
             “Ratsutamine ei ole lihtsalt istumine vaid sport, mis ühendab jõu, tasakaalu,
             painduvuse ja reaktsioonikiiruse täiuslikult.”
           </blockquote>

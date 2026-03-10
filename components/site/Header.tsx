@@ -8,9 +8,9 @@ export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur dark:bg-black/80 border-b">
+    <header className="sticky top-0 z-50 bg-white border-b">
       <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-gray-900">
           <Image
             src="/images/logo.png"
             alt="Ponimetsa Tall logo"
@@ -21,7 +21,7 @@ export function Header() {
           <span>Ponimetsa Tall</span>
         </Link>
 
-        <nav className="hidden md:flex gap-4 text-sm">
+        <nav className="hidden md:flex gap-4 text-sm text-gray-900">
           <Link href="/" className="hover:underline">Avaleht</Link>
           <Link href="/services" className="hover:underline">Hinnakiri</Link>
           {/*
@@ -52,7 +52,7 @@ export function Header() {
         </div>
       </div>
       {open && (
-        <div className="md:hidden border-t bg-white dark:bg-black">
+        <div className="md:hidden border-t bg-white text-gray-900">
           <nav className="flex flex-col px-4 py-3 text-sm gap-3">
             <Link href="/" onClick={() => setOpen(false)}>Avaleht</Link>
             <Link href="/services" onClick={() => setOpen(false)}>Hinnakiri</Link>

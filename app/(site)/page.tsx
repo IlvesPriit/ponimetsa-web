@@ -128,7 +128,7 @@ export default function HomePage() {
       </h1>
 
       <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90 sm:text-xl">
-      Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!
+      Tall Reius Pärnumaal, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!
       </p>
 
     </div>
@@ -140,17 +140,17 @@ export default function HomePage() {
       {/* INTRO */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-center text-4xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-center text-4xl font-semibold text-gray-900">
             Tere tulemast
           </h2>
           <div className="mx-auto mt-4 h-1 w-20 rounded bg-amber-700" />
 
-          <p className="mx-auto mt-8 max-w-4xl text-center text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="mx-auto mt-8 max-w-4xl text-center text-lg leading-relaxed text-gray-700">
             Rahulik ja looduslähedane hobutall Reiu külas, Lottemaa vahetus läheduses –
             mugav ligipääs ja kaunis loodus.
           </p>
 
-          <p className="mx-auto mt-5 max-w-4xl text-center text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="mx-auto mt-5 max-w-4xl text-center text-lg leading-relaxed text-gray-700">
             Tallis tegutseb treener Mariann-Krõõt Ilves, kellel on üle 20-aastane kogemus
             hobu- ja ratsamaailmas ning EKR3 taseme ratsutamise treeneri kutse.
             Pakume ratsutamise algõppe eratreeninguid ja grupitreeninguid nii lastele kui
@@ -158,23 +158,23 @@ export default function HomePage() {
           </p>
 
           <div className="mx-auto mt-10 grid max-w-5xl gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-neutral-950">
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">Atesteeritud treener</div>
-              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">EKR3 kutse ja 20+ aastat kogemust.</div>
+            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm">
+              <div className="text-sm font-semibold text-gray-900">Atesteeritud treener</div>
+              <div className="mt-1 text-sm text-gray-700">EKR3 kutse ja 20+ aastat kogemust.</div>
             </div>
-            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-neutral-950">
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">Personaalsus</div>
-              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">Läheneme igale õpilasele eesmärkide järgi.</div>
+            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm">
+              <div className="text-sm font-semibold text-gray-900">Personaalsus</div>
+              <div className="mt-1 text-sm text-gray-700">Läheneme igale õpilasele eesmärkide järgi.</div>
             </div>
-            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm dark:border-gray-800 dark:bg-neutral-950">
-              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">Hea ligipääs</div>
-              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">13 min Pärnu kesklinnast, bussipeatus ~400 m.</div>
+            <div className="rounded-2xl border bg-white p-5 text-center shadow-sm">
+              <div className="text-sm font-semibold text-gray-900">Hea ligipääs</div>
+              <div className="mt-1 text-sm text-gray-700">13 min Pärnu kesklinnast, bussipeatus ~400 m.</div>
             </div>
           </div>
           <div className="mt-8 flex justify-center">
             <Link
               href="/about"
-              className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
+              className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50"
             >
               Loe meie lugu →
             </Link>
@@ -185,16 +185,16 @@ export default function HomePage() {
      {/* SERVICES */}
 <section className="bg-neutral-50">
   <div className="mx-auto max-w-6xl px-4 py-16">
-    <h2 className="text-center text-3xl font-semibold text-gray-900 dark:text-gray-100">
+    <h2 className="text-center text-3xl font-semibold text-gray-900">
       Teenused
     </h2>
-    <p className="mx-auto mt-2 max-w-3xl text-center text-gray-700 dark:text-gray-300">
+    <p className="mx-auto mt-2 max-w-3xl text-center text-gray-700">
       Valik meie peamistest teenustest. Täpsem info ja ajad on kokkuleppel.
     </p>
 
     <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {services.map((s) => (
-        <div key={s.title} className="overflow-hidden rounded-2xl border bg-white shadow-sm dark:bg-neutral-950">
+        <div key={s.title} className="overflow-hidden rounded-2xl border bg-white shadow-sm">
           <div className="relative h-52 w-full">
             <Image
               src={s.image}
@@ -205,15 +205,15 @@ export default function HomePage() {
           </div>
 
           <div className="p-6">
-            <div className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            <div className="text-xl font-semibold text-gray-900">
               {s.title}
             </div>
 
-            <p className="mt-3 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+            <p className="mt-3 text-sm leading-relaxed text-gray-700">
               {s.intro}
             </p>
 
-            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 dark:text-gray-300">
+            <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700">
               {s.bullets.map((b) => {
                 if (typeof b === "string") {
                   return <li key={b}>{b}</li>;
@@ -222,7 +222,7 @@ export default function HomePage() {
                 return (
                   <li key={b.text}>
                     {b.text}
-                    <ul className="mt-2 list-none space-y-1 pl-4 text-sm text-gray-600 dark:text-gray-400">
+                    <ul className="mt-2 list-none space-y-1 pl-4 text-sm text-gray-600">
                       {b.children.map((child) => (
                         <li key={child}>– {child}</li>
                       ))}
@@ -233,7 +233,7 @@ export default function HomePage() {
             </ul>
 
             {s.note && (
-              <p className="mt-4 rounded-xl bg-neutral-50 p-3 text-xs text-gray-600 dark:bg-neutral-900 dark:text-gray-300">
+              <p className="mt-4 rounded-xl bg-neutral-50 p-3 text-xs text-gray-600">
                 {s.note}
               </p>
             )}
@@ -244,7 +244,7 @@ export default function HomePage() {
     <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
       <Link
         href="/services"
-        className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
+        className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50"
       >
         Vaata kogu hinnakirja →
       </Link>
@@ -263,11 +263,11 @@ export default function HomePage() {
             <div className="mt-8 grid gap-6">
             {/* Facebook */}
             <div className="rounded-2xl border p-3 sm:p-4">
-            <div className="px-2 pb-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+            <div className="px-2 pb-3 text-sm font-medium text-gray-900">
                 Facebook
             </div>
 
-            <div className="overflow-hidden rounded-xl bg-white dark:bg-neutral-950">
+            <div className="overflow-hidden rounded-xl bg-white">
               <FacebookPagePlugin />
             </div>
 
@@ -276,7 +276,7 @@ export default function HomePage() {
                 href="https://www.facebook.com/p/Ponimetsa-tall-61578838420269/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900"
+                className="inline-flex items-center justify-center rounded-xl border bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-neutral-50"
                 >
                 Ava Facebook →
                 </a>
@@ -288,31 +288,31 @@ export default function HomePage() {
       {/* CONTACT */}
       <section id="contact" className="bg-neutral-50">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-center text-3xl font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-center text-3xl font-semibold text-gray-900">
             Kontakt
           </h2>
-          <p className="mx-auto mt-2 max-w-3xl text-center text-gray-700 dark:text-gray-300">
+          <p className="mx-auto mt-2 max-w-3xl text-center text-gray-700">
             Võta meiega ühendust või tule külla. Asume Reiu külas, Lottemaa vahetus läheduses.
           </p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-2">
             {/* Contact details */}
-            <div className="rounded-2xl border bg-white p-6 dark:bg-neutral-950">
-              <div className="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+            <div className="rounded-2xl border bg-white p-6">
+              <div className="space-y-4 text-sm text-gray-700">
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">Ponimetsa Tall</div>
+                  <div className="font-medium text-gray-900">Ponimetsa Tall</div>
                   <div>Reiu küla, Pärnumaa</div>
                 </div>
 
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">Telefon</div>
+                  <div className="font-medium text-gray-900">Telefon</div>
                   <a href="tel:+372" className="hover:underline">
                     +372 5696 8282
                   </a>
                 </div>
 
                 <div>
-                  <div className="font-medium text-gray-900 dark:text-gray-100">E-post</div>
+                  <div className="font-medium text-gray-900">E-post</div>
                   <a href="mailto:ponimetsa@hotmail.com" className="hover:underline">
                   ponimetsa@hotmail.com
                   </a>
