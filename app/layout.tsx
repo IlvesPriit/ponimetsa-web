@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ponimetsa Tall",
-    description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+    description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     images: ["/images/og-image.png"],
   },
 };
