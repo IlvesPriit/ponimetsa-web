@@ -33,7 +33,7 @@ const services: readonly Service[] = [
           children: [
             "Lepinguline kuumaks 6 kuuks",
             "Korrakaardid: 5x ja 10x kaart kehtivusega 2 kuud",
-            "Ühekordne tasu võimalus",
+            "Ühekordse tasu võimalus",
           ],
         },
         "Eratreeningud edasijõudnutele – kuni 2 õpilast korraga",
@@ -243,13 +243,6 @@ export default function HomePage() {
     </div>
     <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
       <Link
-        href="/booking"
-        className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
-      >
-        Broneeri ponisõit või eratrenn kohe!
-      </Link>
-
-      <Link
         href="/services"
         className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
       >
@@ -325,14 +318,6 @@ export default function HomePage() {
                   </a>
                 </div>
 
-                <div className="pt-4">
-                  <Link
-                    href="/booking"
-                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-900 hover:bg-neutral-50 dark:border-gray-700 dark:bg-neutral-950 dark:text-gray-100 dark:hover:bg-neutral-900"
-                  >
-                    Broneeri ponisõit / eratrenn
-                  </Link>
-                </div>
               </div>
             </div>
 

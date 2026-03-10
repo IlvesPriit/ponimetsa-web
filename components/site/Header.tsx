@@ -16,7 +16,9 @@ export function Header() {
         <nav className="hidden md:flex gap-4 text-sm">
           <Link href="/" className="hover:underline">Avaleht</Link>
           <Link href="/services" className="hover:underline">Hinnakiri</Link>
+          {/*
           <Link href="/booking" className="hover:underline">Broneeri aeg</Link>
+          */}
           <Link href="/about" className="hover:underline">Meist</Link>
           <Link href="/contact" className="hover:underline">Kontakt</Link>
           {/*
@@ -46,7 +48,9 @@ export function Header() {
           <nav className="flex flex-col px-4 py-3 text-sm gap-3">
             <Link href="/" onClick={() => setOpen(false)}>Avaleht</Link>
             <Link href="/services" onClick={() => setOpen(false)}>Hinnakiri</Link>
+            {/*
             <Link href="/booking" onClick={() => setOpen(false)}>Broneeri aeg</Link>
+            */}
             <Link href="/about" onClick={() => setOpen(false)}>Meist</Link>
             <Link href="/contact" onClick={() => setOpen(false)}>Kontakt</Link>
             {/*
