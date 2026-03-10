@@ -1,8 +1,34 @@
 import "./globals.css";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL("https://ponimetsa.ee"),
   title: "Ponimetsa Tall",
   description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+
+  openGraph: {
+    title: "Ponimetsa Tall",
+    description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+    url: "https://ponimetsa.ee",
+    siteName: "Ponimetsa Tall",
+    locale: "et_EE",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Ponimetsa Tall",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Ponimetsa Tall",
+    description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+    images: ["/images/og-image.png"],
+  },
 };
 
 export default function RootLayout({
