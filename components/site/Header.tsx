@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export function Header() {
@@ -9,8 +10,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur dark:bg-black/80 border-b">
       <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-lg font-semibold">
-          Ponimetsa Tall
+        <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+          <Image
+            src="/images/logo.png"
+            alt="Ponimetsa Tall logo"
+            width={50}
+            height={50}
+            className="rounded-sm"
+          />
+          <span>Ponimetsa Tall</span>
         </Link>
 
         <nav className="hidden md:flex gap-4 text-sm">
