@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ponimetsa.ee"),
   title: "Ponimetsa Tall",
-  description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+  description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
 
   openGraph: {
     title: "Ponimetsa Tall",
-    description: "Ponimetsa tall – hobused, loodus ja rahu Pärnumaal.",
+    description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     url: "https://ponimetsa.ee",
     siteName: "Ponimetsa Tall",
     locale: "et_EE",
