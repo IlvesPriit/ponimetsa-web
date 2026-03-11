@@ -51,6 +51,55 @@ function formatEtDateTime(value: string | Date) {
   return `${day}.${month}.${year} ${hour}:${minute}`;
 }
 
+function getTallinnParts(date: Date) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Tallinn",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+
+  return {
+    year: Number(get("year")),
+    month: Number(get("month")),
+    day: Number(get("day")),
+    hour: Number(get("hour")),
+    minute: Number(get("minute")),
+    second: Number(get("second")),
+  };
+}
+
+function tallinnLocalToUtcIso(dateStr: string, timeStr: string) {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [hour, minute] = timeStr.split(":").map(Number);
+
+  // Start with a UTC guess using the same wall-clock fields.
+  let utcMs = Date.UTC(year, month - 1, day, hour, minute, 0);
+
+  // Refine against Europe/Tallinn local time. Two passes are enough here.
+  for (let i = 0; i < 2; i += 1) {
+    const actual = getTallinnParts(new Date(utcMs));
+    const desiredNaive = Date.UTC(year, month - 1, day, hour, minute, 0);
+    const actualNaive = Date.UTC(
+      actual.year,
+      actual.month - 1,
+      actual.day,
+      actual.hour,
+      actual.minute,
+      actual.second || 0
+    );
+    utcMs -= actualNaive - desiredNaive;
+  }
+
+  return new Date(utcMs).toISOString();
+}
+
 export default async function AdminSlotsPage({
   searchParams,
 }: {
@@ -189,21 +238,18 @@ export default async function AdminSlotsPage({
     const startYear = String(formData.get("start_year") ?? "").trim();
     const startTime = String(formData.get("start_time") ?? "").trim();
 
-    const endDay = String(formData.get("end_day") ?? "").trim();
-    const endMonth = String(formData.get("end_month") ?? "").trim();
-    const endYear = String(formData.get("end_year") ?? "").trim();
     const endTime = String(formData.get("end_time") ?? "").trim();
 
-    if (!startDay || !startMonth || !startYear || !startTime || !endDay || !endMonth || !endYear || !endTime) {
+    if (!startDay || !startMonth || !startYear || !startTime || !endTime) {
       throw new Error("Algus ja lõpp on kohustuslikud");
     }
 
     assertValidDateParts(startDay, startMonth, startYear, "Algus");
-    assertValidDateParts(endDay, endMonth, endYear, "Lõpp");
+    
 
     const pad2 = (v: string) => v.padStart(2, "0");
     const startDate = `${startYear}-${pad2(startMonth)}-${pad2(startDay)}`;
-    const endDate = `${endYear}-${pad2(endMonth)}-${pad2(endDay)}`;
+    const endDate = startDate;
 
     const isHalfHour = (t: string) => {
       const m = t.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
@@ -229,8 +275,8 @@ export default async function AdminSlotsPage({
       throw new Error("Aeg peab jääma vahemikku 08:00–21:00");
     }
 
-    const startAt = `${startDate}T${startTime}:00`;
-    const endAt = `${endDate}T${endTime}:00`;
+    const startAt = tallinnLocalToUtcIso(startDate, startTime);
+    const endAt = tallinnLocalToUtcIso(endDate, endTime);
 
     if (new Date(endAt) <= new Date(startAt)) {
       throw new Error("Lõpp peab olema hilisem kui algus");
@@ -276,6 +322,14 @@ export default async function AdminSlotsPage({
     const m = String(totalMinutes % 60).padStart(2, "0");
     return `${h}:${m}`;
   });
+
+  const timeToMinutes = (t: string) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+  
+  const defaultStartTime = "09:00";
+  const endTimeOptions = timeOptions.filter((t) => timeToMinutes(t) > timeToMinutes(defaultStartTime));
 
   const now = new Date();
   const defaultDay = String(now.getDate()).padStart(2, "0");
@@ -366,7 +420,7 @@ export default async function AdminSlotsPage({
                   name="start_time"
                   className="w-32 rounded-xl border px-3 py-2"
                   required
-                  defaultValue="09:00"
+                  defaultValue={defaultStartTime}
                 >
                   {timeOptions.map((t) => (
                     <option key={t} value={t}>
@@ -383,57 +437,13 @@ export default async function AdminSlotsPage({
             <div>
               <label className="text-sm font-medium">Lõpp</label>
               <div className="mt-1 flex flex-wrap items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <select
-                    name="end_day"
-                    className="w-20 rounded-xl border px-3 py-2"
-                    required
-                    defaultValue={defaultDay}
-                    aria-label="Lõpu päev"
-                  >
-                    {dayOptions.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-gray-500">.</span>
-                  <select
-                    name="end_month"
-                    className="w-20 rounded-xl border px-3 py-2"
-                    required
-                    defaultValue={defaultMonth}
-                    aria-label="Lõpu kuu"
-                  >
-                    {monthOptions.map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-gray-500">.</span>
-                  <select
-                    name="end_year"
-                    className="w-28 rounded-xl border px-3 py-2"
-                    required
-                    defaultValue={defaultYear}
-                    aria-label="Lõpu aasta"
-                  >
-                    {yearOptions.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="mx-1 text-gray-400">|</span>
-                </div>
                 <select
                   name="end_time"
                   className="w-32 rounded-xl border px-3 py-2"
                   required
-                  defaultValue="10:00"
+                  defaultValue={endTimeOptions[0] ?? "10:00"}
                 >
-                  {timeOptions.map((t) => (
+                  {endTimeOptions.map((t) => (
                     <option key={t} value={t}>
                       {t}
                     </option>
@@ -441,7 +451,7 @@ export default async function AdminSlotsPage({
                 </select>
               </div>
               <p className="mt-1 text-xs text-gray-600">
-                Lõpp peab olema hilisem kui algus.
+                Lõpu kuupäev võetakse automaatselt alguse kuupäeva järgi. Lõpp peab olema hilisem kui algus.
               </p>
             </div>
 
@@ -511,8 +521,50 @@ export default async function AdminSlotsPage({
               <div className="text-sm text-gray-600">Vabu aegu pole veel lisatud.</div>
             )}
           </div>
-        </div>
+          </div>
       </div>
+
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function () {
+              const startSelect = document.querySelector('select[name="start_time"]');
+              const endSelect = document.querySelector('select[name="end_time"]');
+              if (!startSelect || !endSelect) return;
+
+              const allTimes = ${JSON.stringify(timeOptions)};
+
+              function toMinutes(t) {
+                const [h, m] = t.split(':').map(Number);
+                return h * 60 + m;
+              }
+
+              function refreshEndOptions() {
+                const currentStart = startSelect.value;
+                const currentEnd = endSelect.value;
+                const filtered = allTimes.filter((t) => toMinutes(t) > toMinutes(currentStart));
+
+                endSelect.innerHTML = '';
+                filtered.forEach((t) => {
+                  const option = document.createElement('option');
+                  option.value = t;
+                  option.textContent = t;
+                  endSelect.appendChild(option);
+                });
+
+                if (filtered.includes(currentEnd)) {
+                  endSelect.value = currentEnd;
+                } else if (filtered.length > 0) {
+                  endSelect.value = filtered[0];
+                }
+              }
+
+              startSelect.addEventListener('change', refreshEndOptions);
+              refreshEndOptions();
+            })();
+          `,
+        }}
+      />
     </div>
   );
 }

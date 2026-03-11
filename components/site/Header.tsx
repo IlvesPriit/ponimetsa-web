@@ -33,7 +33,7 @@ export function Header() {
           <Link href="/mkrosetid" className="hover:underline">MK rosetid</Link>
           */}
         </nav>
-
+{/*
         <div className="flex items-center gap-3 md:hidden">
           <Link
             href="/booking"
@@ -50,6 +50,7 @@ export function Header() {
             ☰
           </button>
         </div>
+        */}
       </div>
       {open && (
         <div className="md:hidden border-t bg-white text-gray-900">

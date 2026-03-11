@@ -128,7 +128,7 @@ export default function HomePage() {
       </h1>
 
       <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90 sm:text-xl">
-      Tall Reius Pärnumaal, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!
+      Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!
       </p>
 
     </div>

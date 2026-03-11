@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ponimetsa.ee"),
   title: "Ponimetsa Tall",
-  description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+  description: "🦄Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
 
   openGraph: {
     title: "Ponimetsa Tall",
-    description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    description: "🦄Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     url: "https://ponimetsa.ee",
     siteName: "Ponimetsa Tall",
     locale: "et_EE",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ponimetsa Tall",
-    description: "🦄Tall, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    description: "🦄Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     images: ["/images/og-image.png"],
   },
 };
