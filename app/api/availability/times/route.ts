@@ -56,6 +56,7 @@ function ceilToHalfHour(d: Date) {
 
 function fmtEt(d: Date) {
   return d.toLocaleTimeString("et-EE", {
+    timeZone: TZ,
     hour12: false,
     hour: "2-digit",
     minute: "2-digit",
