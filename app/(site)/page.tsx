@@ -306,7 +306,7 @@ export default function HomePage() {
 
                 <div>
                   <div className="font-medium text-gray-900">Telefon</div>
-                  <a href="tel:+372" className="hover:underline">
+                  <a href="tel:+37256968282" className="hover:underline">
                     +372 5696 8282
                   </a>
                 </div>
@@ -314,10 +314,27 @@ export default function HomePage() {
                 <div>
                   <div className="font-medium text-gray-900">E-post</div>
                   <a href="mailto:ponimetsa@hotmail.com" className="hover:underline">
-                  ponimetsa@hotmail.com
+                    ponimetsa@hotmail.com
                   </a>
                 </div>
 
+                <div className="pt-2 flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    href="/booking?kind=inquiry"
+                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-neutral-50"
+                  >
+                    Saada kiire päring
+                  </Link>
+
+                  <a
+                    href="https://www.facebook.com/p/Ponimetsa-tall-61578838420269/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-neutral-50"
+                  >
+                    Kirjuta Facebookis
+                  </a>
+                </div>
               </div>
             </div>
 

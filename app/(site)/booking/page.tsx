@@ -1,11 +1,12 @@
 import Link from "next/link";
+import Script from "next/script";
 import { pool } from "@/lib/db";
 import { redirect } from "next/navigation";
 import ServicePicker from "./ServicePicker";
 import BookingCalendar from "./BookingCalendar";
 
 type PageProps = {
-  searchParams?: Promise<{ service?: string }>;
+  searchParams?: Promise<{ service?: string; kind?: string }>;
 };
 
 type ServiceDef = {
@@ -54,6 +55,45 @@ function fmtEt(d: Date) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+
+async function verifyTurnstileToken(token: string) {
+  const secret =
+    process.env.TURNSTILE_SECRET_KEY_BOOKING ??
+    process.env.TURNSTILE_SECRET_KEY ??
+    "";
+
+  if (!secret) {
+    console.warn("Turnstile secret missing; skipping verification");
+    return true;
+  }
+
+  if (!token) {
+    return false;
+  }
+
+  const body = new URLSearchParams({
+    secret,
+    response: token,
+  });
+
+  const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    console.error("Turnstile verify failed with HTTP", res.status);
+    return false;
+  }
+
+  const json = (await res.json()) as { success?: boolean };
+  return Boolean(json.success);
 }
 
 // ---------------- Email helpers (Resend) ----------------
@@ -223,10 +263,23 @@ function tplTrainerNewBooking(p: {
 export default async function BookingPage({ searchParams }: PageProps) {
   const params = (await searchParams) ?? {};
   const rawServiceSlug = params.service ?? "";
-  const serviceSlug = rawServiceSlug === "ratsatrenn" ? "eratrenn" : rawServiceSlug;
+  const requestedKind = params.kind ?? "";
+
+  const normalizedServiceSlug =
+    rawServiceSlug === "ratsatrenn" ? "eratrenn" : rawServiceSlug;
+
+  const serviceSlug =
+    !normalizedServiceSlug && requestedKind === "inquiry"
+      ? "muu"
+      : normalizedServiceSlug;
 
   const serviceSelected = SERVICES.some((s) => s.slug === serviceSlug);
   const service = SERVICES.find((s) => s.slug === serviceSlug) ?? SERVICES[0];
+  const isInquiryMode = requestedKind === "inquiry" || service.slug === "muu";
+  const turnstileSiteKey =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY_BOOKING ??
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ??
+  "";
 
   // Detect which optional columns exist in public.bookings so we can write structured data safely.
   const bookingCaps = await (async () => {
@@ -260,6 +313,12 @@ export default async function BookingPage({ searchParams }: PageProps) {
     const phone = String(formData.get("phone") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const notes = String(formData.get("notes") ?? "").trim();
+    const turnstileToken = String(formData.get("cf-turnstile-response") ?? "").trim();
+    const turnstileOk = await verifyTurnstileToken(turnstileToken);
+
+    if (!turnstileOk) {
+      throw new Error("Robotikontroll ebaõnnestus. Palun proovi uuesti.");
+    }
 
     if (!svc) throw new Error("Teenuse valik puudub");
     if (!name) throw new Error("Nimi on kohustuslik");
@@ -441,22 +500,47 @@ export default async function BookingPage({ searchParams }: PageProps) {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      <h1 className="text-3xl font-semibold">Broneerimine</h1>
+      {turnstileSiteKey && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+        />
+      )}
+  
+      {(isInquiryMode || serviceSelected) && (
+        <div className="mb-4">
+          <Link
+            href="/booking"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 hover:underline"
+          >
+            ← Tagasi teenuse valikusse
+          </Link>
+        </div>
+      )}
+  
+      <h1 className="text-3xl font-semibold">
+        {isInquiryMode ? "Saada päring" : "Broneerimine"}
+      </h1>
       <p className="mt-2 text-gray-700">
-        Ponijalutus ja eratrenn on broneeritavad vabade aegade alusel. Kõik muu saab kokku leppida päringu kaudu.
+        {isInquiryMode
+          ? "Kirjelda oma soovi ja võtame sinuga ühendust, et aeg ning detailid kokku leppida."
+          : "Ponijalutus ja eratrenn on broneeritavad vabade aegade alusel. Kõik muu saab kokku leppida päringu kaudu."}
       </p>
 
-      <div className="mt-8 rounded-2xl border bg-white p-4">
-        <ServicePicker
-          services={SERVICES.map(({ slug, title }) => ({ slug, title }))}
-          value={serviceSelected ? serviceSlug : ""}
-        />
-        {serviceSelected && service.description && (
-          <p className="mt-2 text-xs text-gray-600">{service.description}</p>
-        )}
-      </div>
+      {!isInquiryMode && (
+        <div className="mt-8 rounded-2xl border bg-white p-4">
+          <ServicePicker
+            services={SERVICES.map(({ slug, title }) => ({ slug, title }))}
+            value={serviceSelected ? serviceSlug : ""}
+          />
+          {serviceSelected && service.description && (
+            <p className="mt-2 text-xs text-gray-600">{service.description}</p>
+          )}
+        </div>
+      )}
 
-      {!serviceSelected && (
+      {!serviceSelected && !isInquiryMode && (
         <p className="mt-4 text-sm text-gray-700">Vali teenus, et näha vabu aegu või saata päring.</p>
       )}
 
@@ -474,11 +558,8 @@ export default async function BookingPage({ searchParams }: PageProps) {
                 <BookingCalendar serviceSlug={service.slug} inputName="start_at" />
               </div>
             </div>
-          ) : (
-            <div className="rounded-2xl border bg-white p-4 text-sm text-gray-700">
-              See teenus ei ole hetkel ajaslotiga broneeritav. Kirjelda oma soovi ja lepime aja kokku.
-            </div>
-          )}
+          ) : null
+          }
 
           <div>
             <label className="text-sm font-medium">Nimi</label>
@@ -492,22 +573,31 @@ export default async function BookingPage({ searchParams }: PageProps) {
             </div>
             <div>
               <label className="text-sm font-medium">E-post</label>
-              <input name="email" type="email" className="mt-1 w-full rounded-xl border px-4 py-3" placeholder="nimi@..." />
+              <input name="email" type="email" className="mt-1 w-full rounded-xl border px-4 py-3" placeholder="" />
             </div>
           </div>
 
           <div>
             <label className="text-sm font-medium">Soov / lisainfo</label>
-            <textarea name="notes" className="mt-1 w-full rounded-xl border px-4 py-3" rows={5} placeholder="Nt lapse vanus, mitu osalejat, erisoovid…" />
+            <textarea
+              name="notes"
+              className="mt-1 w-full rounded-xl border px-4 py-3"
+              rows={5}
+              placeholder=""
+            />
           </div>
+
+          {turnstileSiteKey && (
+            <div className="rounded-2xl border bg-white p-4">
+              <div className="cf-turnstile" data-sitekey={turnstileSiteKey} />
+            </div>
+          )}
 
           <button className="w-full rounded-xl bg-black px-5 py-3 text-sm font-medium text-white hover:opacity-90">
-            Saada broneering
+            {isInquiryMode ? "Saada päring" : "Saada broneering"}
           </button>
 
-          <div className="text-center text-sm text-gray-600">
-            Või kirjuta otse: <Link href="/#contact" className="underline">Kontakt</Link>
-          </div>
+          
         </form>
       )}
     </div>
