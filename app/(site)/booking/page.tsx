@@ -499,7 +499,7 @@ export default async function BookingPage({ searchParams }: PageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16">
+    <div className="mx-auto max-w-2xl bg-white px-4 py-16 text-gray-900">
       {turnstileSiteKey && (
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js"
@@ -512,9 +512,9 @@ export default async function BookingPage({ searchParams }: PageProps) {
         <div className="mb-4">
           <Link
             href="/booking"
-            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 hover:underline"
+            className="inline-flex items-center text-sm text-gray-600 hover:text-black hover:underline"
           >
-            ← Tagasi teenuse valikusse
+            ← Muuda teenust
           </Link>
         </div>
       )}

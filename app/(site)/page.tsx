@@ -292,7 +292,7 @@ export default function HomePage() {
             Kontakt
           </h2>
           <p className="mx-auto mt-2 max-w-3xl text-center text-gray-700">
-            Võta meiega ühendust või tule külla. Asume Reiu külas, Lottemaa vahetus läheduses.
+            Võta meiega ühendust ja tule külla. Asume Reiu külas, Lottemaa vahetus läheduses.
           </p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-2">
