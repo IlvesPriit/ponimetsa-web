@@ -36,7 +36,7 @@ export function Header() {
         <div className="flex items-center gap-3 md:hidden">
           <button
             onClick={() => setOpen(!open)}
-            className="text-xl leading-none"
+            className="text-black text-xl leading-none"
             aria-label="Menu"
           >
             ☰
