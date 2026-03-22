@@ -218,7 +218,7 @@ function tplCustomerReceived(p: {
   end?: Date | null;
 }) {
   const when = formatEtRange(p.start ?? null, p.end ?? null);
-  const subject = "Broneering vastu võetud (kinnitame peagi)";
+  const subject = "Broneering kätte saadud (kinnitame peagi)";
 
   const html = emailShell(
     `Aitäh, ${esc(p.customerName)}!`,
@@ -238,7 +238,7 @@ function tplCustomerReceived(p: {
     `Saime sinu broneeringu kätte.\n` +
     `Teenus: ${p.serviceTitle}` +
     (when ? `\nAeg: ${when}` : "") +
-    `\n\nSee on broneeringu teade. Kinnitame broneeringu tavaliselt 2 tunni jooksul.`;
+    `\n\nSee on broneeringu teade. Kinnitame broneeringu tavaliselt samal päeval.`;
 
   return { subject, html, text };
 }
@@ -246,8 +246,9 @@ function tplCustomerReceived(p: {
 function tplCustomerInquiryReceived(p: {
   customerName: string;
   serviceTitle: string;
+  notes?: string | null;
 }) {
-  const subject = "Päring on vastu võetud";
+  const subject = "Päring on kätte saadud";
 
   const html = emailShell(
     `Aitäh, ${esc(p.customerName)}!`,
@@ -255,6 +256,7 @@ function tplCustomerInquiryReceived(p: {
     <p style="margin:0 0 12px 0;font-size:16px;line-height:1.6;color:#111827;">Saime sinu päringu kätte.</p>
     <div style="padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;background:#fafaf9;">
       <div style="font-size:15px;line-height:1.6;"><strong>Teema:</strong> ${esc(p.serviceTitle)}</div>
+      ${p.notes ? `<div style="margin-top:8px;font-size:15px;line-height:1.7;"><strong>Sinu sõnum:</strong><br/>${esc(p.notes).replace(/\n/g, "<br/>")}</div>` : ""}
     </div>
     <p style="margin:16px 0 0 0;font-size:15px;line-height:1.7;color:#111827;">Võtame teiega lähiajal ühendust, et detailid kokku leppida.</p>
     <p style="margin:12px 0 0 0;font-size:14px;line-height:1.7;color:#4b5563;">Kui soovid midagi lisada, vasta sellele kirjale või võta meiega otse ühendust.</p>
@@ -264,8 +266,9 @@ function tplCustomerInquiryReceived(p: {
   const text =
     `Aitäh, ${p.customerName}!\n\n` +
     `Saime sinu päringu kätte.\n` +
-    `Teema: ${p.serviceTitle}\n\n` +
-    `Võtame teiega lähiajal ühendust, et detailid kokku leppida.`;
+    `Teema: ${p.serviceTitle}` +
+    (p.notes ? `\nSinu sõnum:\n${p.notes}` : "") +
+    `\n\nVõtame teiega lähiajal ühendust, et detailid kokku leppida.`;
 
   return { subject, html, text };
 }
@@ -305,6 +308,43 @@ function tplTrainerNewBooking(p: {
     (p.phone ? `\nTelefon: ${p.phone}` : "") +
     (p.email ? `\nE-post: ${p.email}` : "") +
     (p.notes ? `\n\nLisainfo:\n${p.notes}` : "") +
+    `\n\nAdmin: ${adminUrl}`;
+
+  return { subject, html, text };
+}
+
+function tplTrainerNewInquiry(p: {
+  serviceTitle: string;
+  customerName: string;
+  phone?: string | null;
+  email?: string | null;
+  notes?: string | null;
+}) {
+  const adminUrl = `${getBaseUrl()}/admin/bookings`;
+  const subject = "Uus päring veebilehelt";
+
+  const html = emailShell(
+    "Uus päring veebilehelt",
+    `
+    <p style="margin:0 0 12px 0;font-size:16px;line-height:1.6;color:#111827;">Veebilehelt saabus uus päring.</p>
+    <div style="padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;background:#fafaf9;">
+      <div style="font-size:15px;line-height:1.6;"><strong>Teema:</strong> ${esc(p.serviceTitle)}</div>
+      <div style="margin-top:6px;font-size:15px;line-height:1.6;"><strong>Nimi:</strong> ${esc(p.customerName)}</div>
+      ${p.phone ? `<div style="margin-top:6px;font-size:15px;line-height:1.6;"><strong>Telefon:</strong> <a href="tel:${esc(p.phone)}" style="color:#111827;text-decoration:none;">${esc(p.phone)}</a></div>` : ""}
+      ${p.email ? `<div style="margin-top:6px;font-size:15px;line-height:1.6;"><strong>E-post:</strong> <a href="mailto:${esc(p.email)}" style="color:#111827;text-decoration:none;">${esc(p.email)}</a></div>` : ""}
+      ${p.notes ? `<div style="margin-top:10px;font-size:15px;line-height:1.7;"><strong>Päringu sisu:</strong><br/>${esc(p.notes).replace(/\n/g, "<br/>")}</div>` : ""}
+    </div>
+    <p style="margin:16px 0 0 0;font-size:14px;line-height:1.7;color:#4b5563;">Vaata ja halda kirjet adminis: <a href="${adminUrl}" style="color:#111827;">${adminUrl}</a></p>
+    `
+  );
+
+  const text =
+    `Uus päring veebilehelt\n\n` +
+    `Teema: ${p.serviceTitle}\n` +
+    `Nimi: ${p.customerName}` +
+    (p.phone ? `\nTelefon: ${p.phone}` : "") +
+    (p.email ? `\nE-post: ${p.email}` : "") +
+    (p.notes ? `\n\nPäringu sisu:\n${p.notes}` : "") +
     `\n\nAdmin: ${adminUrl}`;
 
   return { subject, html, text };
@@ -526,6 +566,7 @@ export default async function BookingPage({ searchParams }: PageProps) {
           : tplCustomerInquiryReceived({
               customerName: name,
               serviceTitle,
+              notes: notes || null,
             });
 
         await sendEmail({
@@ -537,28 +578,43 @@ export default async function BookingPage({ searchParams }: PageProps) {
         });
       }
 
-      const trainerEmails = (process.env.TRAINER_EMAILS ?? "")
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const trainerEmails = Array.from(
+        new Set(
+          [
+            ...(process.env.TRAINER_EMAILS ?? "")
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
+            process.env.CONTACT_EMAIL?.trim() ?? "",
+          ].filter(Boolean)
+        )
+      );
 
       if (trainerEmails.length > 0) {
-        const tpl = tplTrainerNewBooking({
-          serviceTitle,
-          customerName: name,
-          phone: phone || null,
-          email: email || null,
-          notes: notes || null,
-          start,
-          end,
-        });
+        const tpl = svcDef.bookable
+          ? tplTrainerNewBooking({
+              serviceTitle,
+              customerName: name,
+              phone: phone || null,
+              email: email || null,
+              notes: notes || null,
+              start,
+              end,
+            })
+          : tplTrainerNewInquiry({
+              serviceTitle,
+              customerName: name,
+              phone: phone || null,
+              email: email || null,
+              notes: notes || null,
+            });
 
         await sendEmail({
           to: trainerEmails,
           subject: tpl.subject,
           html: tpl.html,
           text: tpl.text,
-          replyTo: process.env.CONTACT_EMAIL,
+          replyTo: email || process.env.CONTACT_EMAIL,
         });
       }
     } catch (e) {
@@ -566,7 +622,7 @@ export default async function BookingPage({ searchParams }: PageProps) {
     }
     // --- /Email notifications ---
 
-    redirect("/booking/success");
+    redirect(svcDef.bookable ? "/booking/success" : "/booking/success?type=inquiry");
   }
 
   return (

@@ -1,19 +1,31 @@
 import Link from "next/link";
 
-export default function BookingSuccessPage() {
+export default function BookingSuccessPage({
+  searchParams,
+}: {
+  searchParams?: { type?: string };
+}) {
+  const type = searchParams?.type ?? "booking";
+  const isInquiry = type === "inquiry";
+
   return (
     <div className="mx-auto max-w-2xl bg-white px-4 py-16 text-gray-900">
       <h1 className="text-3xl font-semibold">
-        Aitäh! Broneering on saadetud.
+        {isInquiry
+          ? "Aitäh! Päring on saadetud."
+          : "Aitäh! Broneering on saadetud."}
       </h1>
 
       <p className="mt-4 text-gray-700">
-        Oleme sinu päringu kätte saanud ja kinnitame broneeringu
-        esimesel võimalusel — tavaliselt 2 tunni jooksul.
+        {isInquiry
+          ? "Saime sinu päringu kätte ja võtame sinuga lähiajal ühendust, et detailid kokku leppida."
+          : "Oleme sinu päringu kätte saanud ja kinnitame broneeringu esimesel võimalusel."}
       </p>
 
       <p className="mt-3 text-gray-700">
-        Kui kinnitust ei ole tulnud, palun võta meiega ühendust.
+        {isInquiry
+          ? "Kui soovid midagi lisada või täpsustada, võid meile julgelt kirjutada."
+          : "Kui kinnitust ei ole päeva jooksul tulnud, palun võta meiega ühendust."}
       </p>
 
       <div className="mt-8 flex gap-3">
