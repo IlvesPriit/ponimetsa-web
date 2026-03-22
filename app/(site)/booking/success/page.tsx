@@ -1,11 +1,12 @@
 import Link from "next/link";
 
-export default function BookingSuccessPage({
+export default async function BookingSuccessPage({
   searchParams,
 }: {
-  searchParams?: { type?: string };
+  searchParams?: Promise<{ type?: string }>;
 }) {
-  const type = searchParams?.type ?? "booking";
+  const params = (await searchParams) ?? {};
+  const type = params.type ?? "booking";
   const isInquiry = type === "inquiry";
 
   return (
