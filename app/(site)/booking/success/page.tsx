@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function BookingSuccessPage() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16">
+    <div className="mx-auto max-w-2xl bg-white px-4 py-16 text-gray-900">
       <h1 className="text-3xl font-semibold">
         Aitäh! Broneering on saadetud.
       </h1>

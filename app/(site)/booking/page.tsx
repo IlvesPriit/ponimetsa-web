@@ -6,7 +6,7 @@ import ServicePicker from "./ServicePicker";
 import BookingCalendar from "./BookingCalendar";
 
 type PageProps = {
-  searchParams?: Promise<{ service?: string; kind?: string }>;
+  searchParams?: Promise<{ service?: string; kind?: string; error?: string }>;
 };
 
 type ServiceDef = {
@@ -264,6 +264,7 @@ export default async function BookingPage({ searchParams }: PageProps) {
   const params = (await searchParams) ?? {};
   const rawServiceSlug = params.service ?? "";
   const requestedKind = params.kind ?? "";
+  const requestedError = params.error ?? "";
 
   const normalizedServiceSlug =
     rawServiceSlug === "ratsatrenn" ? "eratrenn" : rawServiceSlug;
@@ -280,6 +281,13 @@ export default async function BookingPage({ searchParams }: PageProps) {
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY_BOOKING ??
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ??
   "";
+
+  const errorMessage =
+    requestedError === "turnstile"
+      ? "Robotikontroll ebaõnnestus või jäi tegemata. Palun proovi uuesti ning kinnita, et sa ei ole robot."
+      : requestedError === "unknown"
+        ? "Midagi läks saatmisel valesti. Palun proovi uuesti."
+        : "";
 
   // Detect which optional columns exist in public.bookings so we can write structured data safely.
   const bookingCaps = await (async () => {
@@ -313,11 +321,17 @@ export default async function BookingPage({ searchParams }: PageProps) {
     const phone = String(formData.get("phone") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const notes = String(formData.get("notes") ?? "").trim();
+    const backParams = new URLSearchParams();
+    backParams.set("service", svc);
+    if (svc === "muu") {
+      backParams.set("kind", "inquiry");
+    }
     const turnstileToken = String(formData.get("cf-turnstile-response") ?? "").trim();
     const turnstileOk = await verifyTurnstileToken(turnstileToken);
 
     if (!turnstileOk) {
-      throw new Error("Robotikontroll ebaõnnestus. Palun proovi uuesti.");
+      backParams.set("error", "turnstile");
+      redirect(`/booking?${backParams.toString()}`);
     }
 
     if (!svc) throw new Error("Teenuse valik puudub");
@@ -528,6 +542,21 @@ export default async function BookingPage({ searchParams }: PageProps) {
           : "Ponijalutus ja eratrenn on broneeritavad vabade aegade alusel. Kõik muu saab kokku leppida päringu kaudu."}
       </p>
 
+      {errorMessage && (
+        <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+          <div className="font-medium">Saatmine ei õnnestunud.</div>
+          <div className="mt-1">{errorMessage}</div>
+          <div className="mt-3">
+            <Link
+              href={isInquiryMode ? "/booking?kind=inquiry" : serviceSelected ? `/booking?service=${service.slug}` : "/booking"}
+              className="inline-flex items-center text-sm font-medium text-red-800 underline underline-offset-2"
+            >
+              Proovi uuesti
+            </Link>
+          </div>
+        </div>
+      )}
+
       {!isInquiryMode && (
         <div className="mt-8 rounded-2xl border bg-white p-4">
           <ServicePicker
@@ -589,7 +618,10 @@ export default async function BookingPage({ searchParams }: PageProps) {
 
           {turnstileSiteKey && (
             <div className="rounded-2xl border bg-white p-4">
-              <div className="cf-turnstile" data-sitekey={turnstileSiteKey} />
+              <div className="mb-2 text-sm text-gray-700">
+                Palun kinnita enne saatmist.
+              </div>
+              <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" />
             </div>
           )}
 

@@ -146,8 +146,7 @@ export default function HomePage() {
           <div className="mx-auto mt-4 h-1 w-20 rounded bg-amber-700" />
 
           <p className="mx-auto mt-8 max-w-4xl text-center text-lg leading-relaxed text-gray-700">
-            Rahulik ja looduslähedane hobutall Reiu külas, Lottemaa vahetus läheduses –
-            mugav ligipääs ja kaunis loodus.
+            Rahulik ja looduslähedane hobutall Reiu külas, Lottemaa vahetus läheduses.
           </p>
 
           <p className="mx-auto mt-5 max-w-4xl text-center text-lg leading-relaxed text-gray-700">
