@@ -160,7 +160,7 @@ export default async function AdminBookingsPage() {
     // Send email based on new status (non-blocking). IMPORTANT: before redirect().
     try {
       const details = await pool.query(
-        `select b.customer_name, b.customer_email, b.start_at, b.end_at, s.title as service_title
+        `select b.customer_name, b.customer_email, b.start_at, b.end_at, b.kind, s.slug as service_slug, s.title as service_title
          from public.bookings b
          left join public.services s on s.id = b.service_id
          where b.id = $1
@@ -171,7 +171,11 @@ export default async function AdminBookingsPage() {
       if ((details.rowCount ?? 0) === 1) {
         const row = details.rows[0] as any;
         const to = String(row.customer_email ?? "").trim();
-        if (to) {
+        const isInquiry =
+          row.kind === "inquiry" ||
+          row.service_slug === "muu" ||
+          (!row.start_at && !row.end_at);
+        if (!isInquiry && to) {
           const start = row.start_at ? new Date(row.start_at) : null;
           const end = row.end_at ? new Date(row.end_at) : null;
           const when = fmtEtRange(start, end);

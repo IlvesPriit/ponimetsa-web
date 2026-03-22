@@ -185,6 +185,32 @@ function esc(s: string) {
     .replace(/'/g, "&#039;");
 }
 
+function emailShell(title: string, bodyHtml: string) {
+  const logoUrl = `${getBaseUrl()}/images/logo.png`;
+  return `
+  <div style="margin:0;padding:24px;background:#f5f5f4;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#111827;">
+    <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.05);">
+      <div style="padding:20px 24px;border-bottom:1px solid #e5e7eb;background:#ffffff;display:flex;align-items:center;gap:14px;">
+        <img src="${logoUrl}" alt="Ponimetsa Tall" width="48" height="48" style="display:block;border-radius:10px;border:1px solid #e5e7eb;background:#fff;" />
+        <div>
+          <div style="font-size:20px;font-weight:700;line-height:1.2;color:#111827;">Ponimetsa Tall</div>
+          <div style="margin-top:2px;font-size:13px;line-height:1.4;color:#6b7280;">Ratsatrennid, ponisõit ja hobuteenused Pärnumaal</div>
+        </div>
+      </div>
+      <div style="padding:24px;">
+        <h1 style="margin:0 0 16px 0;font-size:26px;line-height:1.2;color:#111827;">${title}</h1>
+        ${bodyHtml}
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid #e5e7eb;background:#fafaf9;font-size:13px;line-height:1.6;color:#6b7280;">
+        <div><strong style="color:#111827;">Ponimetsa Tall</strong></div>
+        <div>Reiu küla, Pärnumaa</div>
+        <div>Telefon: <a href="tel:+37256968282" style="color:#111827;text-decoration:none;">+372 5696 8282</a></div>
+        <div>E-post: <a href="mailto:ponimetsa@hotmail.com" style="color:#111827;text-decoration:none;">ponimetsa@hotmail.com</a></div>
+      </div>
+    </div>
+  </div>`;
+}
+
 function tplCustomerReceived(p: {
   customerName: string;
   serviceTitle: string;
@@ -194,19 +220,18 @@ function tplCustomerReceived(p: {
   const when = formatEtRange(p.start ?? null, p.end ?? null);
   const subject = "Broneering vastu võetud (kinnitame peagi)";
 
-  const html = `
-  <div style="font-family:system-ui,-apple-system;line-height:1.5;color:#111">
-    <h2 style="margin:0 0 12px 0;">Aitäh, ${esc(p.customerName)}!</h2>
-    <p style="margin:0 0 10px 0;">Saime sinu broneeringu kätte.</p>
-    <div style="padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa">
-      <div><strong>Teenus:</strong> ${esc(p.serviceTitle)}</div>
-      ${when ? `<div style="margin-top:6px;"><strong>Aeg:</strong> ${esc(when)}</div>` : ""}
+  const html = emailShell(
+    `Aitäh, ${esc(p.customerName)}!`,
+    `
+    <p style="margin:0 0 12px 0;font-size:16px;line-height:1.6;color:#111827;">Saime sinu broneeringu kätte.</p>
+    <div style="padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;background:#fafaf9;">
+      <div style="font-size:15px;line-height:1.6;"><strong>Teenus:</strong> ${esc(p.serviceTitle)}</div>
+      ${when ? `<div style="margin-top:6px;font-size:15px;line-height:1.6;"><strong>Aeg:</strong> ${esc(when)}</div>` : ""}
     </div>
-    <p style="margin:12px 0 0 0;">
-      See e-kiri on <strong>broneeringu teade</strong>. Kinnitame broneeringu esimesel võimalusel (tavaliselt 2 tunni jooksul).
-    </p>
-    <p style="margin:12px 0 0 0;color:#374151;font-size:14px">Kui tekib küsimusi, vasta sellele kirjale või võta meiega ühendust.</p>
-  </div>`;
+    <p style="margin:16px 0 0 0;font-size:15px;line-height:1.7;color:#111827;">See e-kiri on <strong>broneeringu teade</strong>. Kinnitame broneeringu esimesel võimalusel.</p>
+    <p style="margin:12px 0 0 0;font-size:14px;line-height:1.7;color:#4b5563;">Kui tekib küsimusi, vasta sellele kirjale või võta meiega otse ühendust.</p>
+    `
+  );
 
   const text =
     `Aitäh, ${p.customerName}!\n\n` +
@@ -214,6 +239,33 @@ function tplCustomerReceived(p: {
     `Teenus: ${p.serviceTitle}` +
     (when ? `\nAeg: ${when}` : "") +
     `\n\nSee on broneeringu teade. Kinnitame broneeringu tavaliselt 2 tunni jooksul.`;
+
+  return { subject, html, text };
+}
+
+function tplCustomerInquiryReceived(p: {
+  customerName: string;
+  serviceTitle: string;
+}) {
+  const subject = "Päring on vastu võetud";
+
+  const html = emailShell(
+    `Aitäh, ${esc(p.customerName)}!`,
+    `
+    <p style="margin:0 0 12px 0;font-size:16px;line-height:1.6;color:#111827;">Saime sinu päringu kätte.</p>
+    <div style="padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;background:#fafaf9;">
+      <div style="font-size:15px;line-height:1.6;"><strong>Teema:</strong> ${esc(p.serviceTitle)}</div>
+    </div>
+    <p style="margin:16px 0 0 0;font-size:15px;line-height:1.7;color:#111827;">Võtame teiega lähiajal ühendust, et detailid kokku leppida.</p>
+    <p style="margin:12px 0 0 0;font-size:14px;line-height:1.7;color:#4b5563;">Kui soovid midagi lisada, vasta sellele kirjale või võta meiega otse ühendust.</p>
+    `
+  );
+
+  const text =
+    `Aitäh, ${p.customerName}!\n\n` +
+    `Saime sinu päringu kätte.\n` +
+    `Teema: ${p.serviceTitle}\n\n` +
+    `Võtame teiega lähiajal ühendust, et detailid kokku leppida.`;
 
   return { subject, html, text };
 }
@@ -464,12 +516,17 @@ export default async function BookingPage({ searchParams }: PageProps) {
       const end = endAt;
 
       if (email) {
-        const tpl = tplCustomerReceived({
-          customerName: name,
-          serviceTitle,
-          start,
-          end,
-        });
+        const tpl = svcDef.bookable
+          ? tplCustomerReceived({
+              customerName: name,
+              serviceTitle,
+              start,
+              end,
+            })
+          : tplCustomerInquiryReceived({
+              customerName: name,
+              serviceTitle,
+            });
 
         await sendEmail({
           to: email,
