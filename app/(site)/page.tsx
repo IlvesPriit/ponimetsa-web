@@ -312,8 +312,8 @@ export default function HomePage() {
 
                 <div>
                   <div className="font-medium text-gray-900">E-post</div>
-                  <a href="mailto:ponimetsa@hotmail.com" className="hover:underline">
-                    ponimetsa@hotmail.com
+                  <a href="mailto:info@ponimetsa.ee" className="hover:underline">
+                      info@ponimetsa.ee
                   </a>
                 </div>
 
