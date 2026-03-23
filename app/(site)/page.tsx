@@ -318,12 +318,12 @@ export default function HomePage() {
                 </div>
 
                 <div className="pt-2 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    href="/booking?kind=inquiry"
-                    className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-neutral-50"
-                  >
-                    Saada päring
-                  </Link>
+                <a
+                  href="/booking?kind=inquiry"
+                  className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-neutral-50"
+                >
+                  Saada päring
+                </a>
 
                   <a
                     href="https://www.facebook.com/p/Ponimetsa-tall-61578838420269/"
