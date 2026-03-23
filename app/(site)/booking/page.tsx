@@ -734,7 +734,42 @@ export default async function BookingPage({ searchParams }: PageProps) {
               <div className="mb-2 text-sm text-gray-700">
                 Palun kinnita enne saatmist.
               </div>
-              <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" />
+              <div id="turnstile-booking-widget" />
+              <Script id="turnstile-booking-render" strategy="afterInteractive">
+                {`
+                  (function () {
+                    const siteKey = ${JSON.stringify(turnstileSiteKey)};
+                    const widgetId = "turnstile-booking-widget";
+
+                    function mountTurnstile() {
+                      const el = document.getElementById(widgetId);
+                      if (!el) return;
+
+                      if (el.getAttribute("data-rendered") === "1") return;
+
+                      if (window.turnstile && typeof window.turnstile.render === "function") {
+                        el.innerHTML = "";
+                        window.turnstile.render("#" + widgetId, {
+                          sitekey: siteKey,
+                          theme: "light",
+                        });
+                        el.setAttribute("data-rendered", "1");
+                      }
+                    }
+
+                    let tries = 0;
+                    const timer = setInterval(function () {
+                      mountTurnstile();
+                      tries += 1;
+                      if (document.getElementById(widgetId)?.getAttribute("data-rendered") === "1" || tries > 40) {
+                        clearInterval(timer);
+                      }
+                    }, 250);
+
+                    mountTurnstile();
+                  })();
+                `}
+              </Script>
             </div>
           )}
 
