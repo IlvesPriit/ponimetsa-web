@@ -734,42 +734,73 @@ export default async function BookingPage({ searchParams }: PageProps) {
               <div className="mb-2 text-sm text-gray-700">
                 Palun kinnita enne saatmist.
               </div>
-              <div id="turnstile-booking-widget" />
-              <Script id="turnstile-booking-render" strategy="afterInteractive">
-                {`
-                  (function () {
-                    const siteKey = ${JSON.stringify(turnstileSiteKey)};
-                    const widgetId = "turnstile-booking-widget";
+              <div id="turnstile-booking-widget" data-turnstile-ready="0" />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    (function () {
+                      const siteKey = ${JSON.stringify(turnstileSiteKey)};
+                      const widgetId = "turnstile-booking-widget";
 
-                    function mountTurnstile() {
-                      const el = document.getElementById(widgetId);
-                      if (!el) return;
-
-                      if (el.getAttribute("data-rendered") === "1") return;
-
-                      if (window.turnstile && typeof window.turnstile.render === "function") {
+                      function clearWidget() {
+                        const el = document.getElementById(widgetId);
+                        if (!el) return null;
                         el.innerHTML = "";
-                        window.turnstile.render("#" + widgetId, {
-                          sitekey: siteKey,
-                          theme: "light",
-                        });
-                        el.setAttribute("data-rendered", "1");
+                        el.removeAttribute("data-rendered");
+                        el.setAttribute("data-turnstile-ready", "0");
+                        return el;
                       }
-                    }
 
-                    let tries = 0;
-                    const timer = setInterval(function () {
+                      function mountTurnstile() {
+                        const el = document.getElementById(widgetId);
+                        if (!el) return false;
+
+                        if (window.turnstile && typeof window.turnstile.render === "function") {
+                          if (el.getAttribute("data-rendered") === "1") {
+                            return true;
+                          }
+
+                          el.innerHTML = "";
+                          window.turnstile.render("#" + widgetId, {
+                            sitekey: siteKey,
+                            theme: "light",
+                          });
+                          el.setAttribute("data-rendered", "1");
+                          el.setAttribute("data-turnstile-ready", "1");
+                          return true;
+                        }
+
+                        return false;
+                      }
+
+                      clearWidget();
+
+                      let tries = 0;
+                      const timer = setInterval(function () {
+                        const done = mountTurnstile();
+                        tries += 1;
+                        if (done || tries > 40) {
+                          clearInterval(timer);
+                        }
+                      }, 250);
+
                       mountTurnstile();
-                      tries += 1;
-                      if (document.getElementById(widgetId)?.getAttribute("data-rendered") === "1" || tries > 40) {
-                        clearInterval(timer);
-                      }
-                    }, 250);
 
-                    mountTurnstile();
-                  })();
-                `}
-              </Script>
+                      window.addEventListener("pageshow", function () {
+                        clearWidget();
+                        let retryCount = 0;
+                        const retryTimer = setInterval(function () {
+                          const done = mountTurnstile();
+                          retryCount += 1;
+                          if (done || retryCount > 40) {
+                            clearInterval(retryTimer);
+                          }
+                        }, 250);
+                      });
+                    })();
+                  `,
+                }}
+              />
             </div>
           )}
 
