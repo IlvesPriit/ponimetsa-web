@@ -205,7 +205,7 @@ function emailShell(title: string, bodyHtml: string) {
         <div><strong style="color:#111827;">Ponimetsa Tall</strong></div>
         <div>Reiu küla, Pärnumaa</div>
         <div>Telefon: <a href="tel:+37256968282" style="color:#111827;text-decoration:none;">+372 5696 8282</a></div>
-        <div>E-post: <a href="mailto:ponimetsa@hotmail.com" style="color:#111827;text-decoration:none;">ponimetsa@hotmail.com</a></div>
+        <div>E-post: <a href="mailto:info@ponimetsa.ee" style="color:#111827;text-decoration:none;">info@ponimetsa.ee</a></div>
       </div>
     </div>
   </div>`;
