@@ -6,6 +6,7 @@ type PriceRow = {
   price2?: string;
   unit?: string;
   note?: string;
+  priceNote?: string;
 };
 
 type PriceSection = {
@@ -25,44 +26,42 @@ const sections: PriceSection[] = [
     rows: [
       {
         label: "1× nädalas (4 trenni kuus)",
-        price: "80 €",
-        price2: "70 €",
-        note: "Soodushind avamiskuul: 75 €",
+        price: "80€ / 75€*",
+        price2: "70€",
       },
       {
         label: "2× nädalas (8 trenni kuus)",
-        price: "135 €",
-        price2: "120 €",
-        note: "Soodushind avamiskuul: 125 €",
+        price: "135€ / 125€*",
+        price2: "120€",
       },
       {
         label: "3× nädalas (12 trenni kuus)",
-        price: "175 €",
-        price2: "150 €",
-        note: "Soodushind avamiskuul: 160 €",
+        price: "175€ / 160€*",
+        price2: "150€",
       },
     ],
     footnotes: [
       "Grupitreeningutel osaleja paneb hobuse iseseisvalt valmis ning sõidab erinevate hobustega (va isikliku hobuse omanik). Kui on soov sõita ühe kindla hobusega, on võimalik võtta hobune täis- või poolrendile.",
       "Kuupaketiga treeningutel osalejatega sõlmitakse leping 6 kuuks. Tasumine toimub iga kalendrikuu alguses enne õpilase kalendrikuu esimest treeningut. Küsi tingimusi tutvumiseks.",
       "Vähemalt kahe sama pere liikme puhul, kes osalevad treeningutel korrakaartide ja/või lepingulise kuumaksu alusel, kehtib soodustus -10% iga liikme kohta.",
+      "* Avamiskuu soodushinnad.",
     ],
   },
   {
     title: "Treeningutel osalemine",
     subtitle: "Ühe korra tasu inimese kohta",
     rows: [
-      { label: "1× grupitreeningul osalemine", price: "25 €" },
-      { label: "Lisatrenn grupis (lisaks kuupaketile)", price: "15 €" },
+      { label: "1× grupitreeningul osalemine", price: "25€" },
+      { label: "Lisatrenn grupis (lisaks kuupaketile)", price: "15€" },
       {
         label: "Eratrenn (kuni 2 sõitjat)",
-        price: "35 €",
-        note: "Ponimetsa talli kuupaketi kasutajale 25 €.",
+        price: "35€",
+        note: "Ponimetsa talli kuupaketi kasutajale 25€.",
       },
-      { label: "5× kaart", price: "110 €" },
-      { label: "10× kaart", price: "190 €" },
-      { label: "1× algõppe eratrenn (0,5–1 h)", price: "35 €" },
-      { label: "1× ponisõbra trenn (~0,5 h)", price: "25 €" },
+      { label: "5× kaart", price: "110€" },
+      { label: "10× kaart", price: "190€" },
+      { label: "1× algõppe eratrenn (0,5–1 h)", price: "35€" },
+      { label: "1× ponisõbra trenn (~0,5 h)", price: "25€" },
     ],
     footnotes: [
       "Korrakaarti saab kasutada 2 kuu jooksul pärast soetamist. Vähemalt kahe sama pere liikme puhul, kes osalevad treeningutel korrakaartide ja/või lepingulise kuumaksu alusel, kehtib soodustus -10% iga liikme kohta.",
@@ -75,20 +74,20 @@ const sections: PriceSection[] = [
     title: "Võistlustel osalemine",
     columns: { a: "Ühe korra tasu tallihobusega (inimese kohta)", b: "Ühe korra tasu rendi või isikliku hobusega (inimese kohta)" },
     rows: [
-      { label: "Hobuse päevatasu", price: "10 €", price2: "—" },
-      { label: "Treeneri päevatasu", price: "15 €", price2: "15 €" },
+      { label: "Hobuse päevatasu", price: "10€", price2: "—" },
+      { label: "Treeneri päevatasu", price: "15€", price2: "15€" },
     ],
   },
   {
     title: "Ponijalutus ja elamusõidud",
     rows: [
-      { label: "Hobuse rentimine grupile 1 h (kuni 5 inimest)", price: "50 €" },
-      { label: "Ponijalutus 0,5 h", price: "20 €" },
+      { label: "Hobuse rentimine grupile 1 h (kuni 5 inimest)", price: "50€" },
+      { label: "Ponijalutus 0,5 h", price: "20€" },
       {
         label: "Maastikusõit 1 h",
-        price: "45 €",
+        price: "45€",
         unit: "/inimene",
-        note: "Ponimetsa talli paketi või kuukardi kasutajale 35 €.",
+        note: "Ponimetsa talli paketi või kuukardi kasutajale 35€.",
       },
     ],
   },
@@ -96,8 +95,8 @@ const sections: PriceSection[] = [
     title: "Hobuse rentimine",
     subtitle: "Kuutasu",
     rows: [
-      { label: "Hobuse rentimine (täisrent)", price: "200 €" },
-      { label: "Hobuse rentimine (poolrent)", price: "100 €" },
+      { label: "Hobuse rentimine (täisrent)", price: "200€" },
+      { label: "Hobuse rentimine (poolrent)", price: "100€" },
     ],
     footnotes: [
       "Täisrent tähendab, et kogu vastutus hobuse eest on rentnikul ning keegi teine hobusega treeningutel ei osale. Hobuse rendi leping sõlmitakse aastaks. Hobuse täisrent sisaldab vaid hobuse pidamiskulusid ja hobuse renti. Sellele lisanduvad treeningute tasud ja vastavalt vajadusele muud hoolduskulud (nt kapjade hooldus, 1–2× aastas ussirohi ja vaktsineerimine, vajadusel muud ravimid, soovi korral lisasöödad). Võistlustel osaledes lisanduvad võistluste tasud ja hobuse aastalitsents Ratsaspordi Liidule.",
@@ -109,37 +108,37 @@ const sections: PriceSection[] = [
     rows: [
       {
         label: "Hobuse ülalpidamisteenus",
-        price: "200 €",
+        price: "200€",
         unit: "/kuu",
         note:
           "Hobusel on kindel boksikoht. Hobune veedab päeva vastavalt ilmale koplis ning öösel 4 × 3 m boksis. Hind sisaldab hein/silo, vett, soola, 1× päevas jõusööda andmist (sööt omaniku poolt), talvel vajadusel tekitamist ning platsi kasutust grupitreeningute- ja muude broneeritud treeningute välisel ajal.",
       },
-      { label: "Hobuse majutus 24 h", price: "25 €" },
-      { label: "Hobuse esitlemine sepale, vetile vms tallipidaja poolt", price: "5 €", unit: "/kord" },
+      { label: "Hobuse majutus 24 h", price: "25€" },
+      { label: "Hobuse esitlemine sepale, vetile vms tallipidaja poolt", price: "5€", unit: "/kord" },
       {
         label: "Hobusele lisasööda andmine, ravimi manustamine",
-        price: "5 €",
+        price: "5€",
         unit: "/päev",
         note: "Pikema perioodi vältel kokkuleppel.",
       },
-      //{ label: "Maneeži kasutus külalisele", price: "25 €", unit: "/tund", note: "Kuni 2 hobust." },
+      //{ label: "Maneeži kasutus külalisele", price: "25€", unit: "/tund", note: "Kuni 2 hobust." },
     ],
   },
   {
     title: "Muud teenused",
     rows: [
-      { label: "Hobuse sõitmine", price: "20 €", unit: "/kord", note: "Pikema perioodi vältel kokkuleppel." },
-      { label: "Treileri rent", price: "35 €", unit: "/ööpäev" },
+      { label: "Hobuse sõitmine", price: "20€", unit: "/kord", note: "Pikema perioodi vältel kokkuleppel." },
+      { label: "Treileri rent", price: "35€", unit: "/ööpäev" },
       {
         label: "Hobuste transport treileriga",
-        price: "50 €",
-        note: "Treiler + auto + juht. Lisandub 0,5 € kilomeetri kohta Ponimetsa klientidele, välistele klientidele 0,8 € kilomeetri kohta.",
+        price: "50€",
+        note: "Treiler + auto + juht. Lisandub 0,5€ kilomeetri kohta Ponimetsa klientidele, välistele klientidele 0,8€ kilomeetri kohta.",
       },
-      { label: "Ponijalutus üritusel 1 h 1 poniga", price: "100 €", note: "Treiler + auto + juht + 1 poni." },
-      { label: "Ponijalutus üritusel 1 h 2 poniga", price: "180 €", note: "Treiler + auto + juht + 2 poni." },
+      { label: "Ponijalutus üritusel 1 h 1 poniga", price: "100€", note: "Treiler + auto + juht + 1 poni." },
+      { label: "Ponijalutus üritusel 1 h 2 poniga", price: "180€", note: "Treiler + auto + juht + 2 poni." },
     ],
     footnotes: [
-      "Ponijalutus üritusel: 20 km raadiuses kodutallist. Kaugemale lisandub 1 € kilomeetri kohta.",
+      "Ponijalutus üritusel: 20 km raadiuses kodutallist. Kaugemale lisandub 1€ kilomeetri kohta.",
     ],
   },
 ];
@@ -171,7 +170,7 @@ function PriceTable({ section }: { section: PriceSection }) {
                   {r.note && <div className="mt-1 text-xs text-gray-600">{r.note}</div>}
                 </td>
                 <td className="px-4 py-3 text-gray-900">
-                  <span className="font-medium">{r.price ?? "—"}</span>
+                  <span className="text-gray-900">{r.price ?? "—"}</span>
                   {r.unit && <span className="ml-1 text-gray-600">{r.unit}</span>}
                 </td>
                 {hasTwo && <td className="px-4 py-3 text-gray-900">{r.price2 ?? "—"}</td>}
@@ -182,10 +181,18 @@ function PriceTable({ section }: { section: PriceSection }) {
       </div>
 
       {section.footnotes?.length ? (
-        <ul className="mt-4 list-disc space-y-1 pl-5 text-xs text-gray-600">
-          {section.footnotes.map((t) => (
-            <li key={t}>{t}</li>
-          ))}
+        <ul className="mt-4 space-y-1 pl-5 text-xs text-gray-600">
+          {section.footnotes.map((t) =>
+            t.startsWith("*") ? (
+              <li key={t} className="list-none mt-3 pt-3 border-t text-gray-700">
+                <span className="font-medium">*</span> {t.slice(1).trim()}
+              </li>
+            ) : (
+              <li key={t} className="list-disc">
+                {t}
+              </li>
+            )
+          )}
         </ul>
       ) : null}
     </div>
