@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://ponimetsa.ee/images/og-image.jpeg",
+        url: "https://ponimetsa.ee/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Ponimetsa Tall",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ponimetsa Tall",
     description: "🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
-    images: ["https://ponimetsa.ee/images/og-image.jpeg"],
+    images: ["https://ponimetsa.ee/images/og-image.jpg"],
   },
 };
 
