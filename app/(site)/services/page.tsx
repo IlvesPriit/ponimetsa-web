@@ -79,7 +79,7 @@ const sections: PriceSection[] = [
     ],
   },
   {
-    title: "Ponijalutus ja elamusõidud",
+    title: "Ponijalutus ja elamussõidud",
     rows: [
       { label: "Hobuse rentimine grupile 1 h (kuni 5 inimest)", price: "50€" },
       { label: "Ponijalutus 0,5 h", price: "20€" },
