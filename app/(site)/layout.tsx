@@ -4,11 +4,11 @@ import { Footer } from "@/components/site/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ponimetsa.ee"),
-  title: "Ponimetsa Tall",
-  description: "🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+  title: "Ponimetsa Tall - 🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+  description: "Ratsatreeningud, ponisõit ja maastikusõidud Pärnumaal.",
   openGraph: {
-    title: "Ponimetsa Tall",
-    description: "🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    title: "Ponimetsa Tall- 🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    description: "Ratsatreeningud, ponisõit ja maastikusõidud Pärnumaal.",
     url: "https://ponimetsa.ee",
     siteName: "Ponimetsa Tall",
     locale: "et_EE",
