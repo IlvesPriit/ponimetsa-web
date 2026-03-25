@@ -4,10 +4,10 @@ import { Footer } from "@/components/site/Footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ponimetsa.ee"),
-  title: "Ponimetsa Tall - 🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+  title: "Ponimetsa Tall - Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
   description: "Ratsatreeningud, ponisõit ja maastikusõidud Pärnumaal.",
   openGraph: {
-    title: "Ponimetsa Tall- 🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    title: "Ponimetsa Tall- Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     description: "Ratsatreeningud, ponisõit ja maastikusõidud Pärnumaal.",
     url: "https://ponimetsa.ee",
     siteName: "Ponimetsa Tall",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ponimetsa Tall",
-    description: "🐴 Tall Pärnu külje, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
+    description: "🐴 Tall Pärnu küljel, kus kohtuvad lõbu, professionaalsus ja personaalne lähenemine!",
     images: ["https://ponimetsa.ee/images/og-image.jpeg?v=2"],
   },
 };
