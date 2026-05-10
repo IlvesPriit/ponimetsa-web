@@ -110,7 +110,7 @@ export default function HomePage() {
       {/* HERO */}
 <section className="relative min-h-[80vh] w-full overflow-hidden">
   <Image
-    src="/images/hero.jpeg"
+    src="/images/hero2.jpeg"
     alt="Ponimetsa Tall"
     fill
     priority
