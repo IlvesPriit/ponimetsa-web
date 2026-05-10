@@ -86,8 +86,8 @@ const sections: PriceSection[] = [
       {
         label: "Maastikusõit 1 h",
         price: "45€",
-        unit: "/inimene",
-        note: "Ponimetsa talli paketi või kuukaardi kasutajale 35€.",
+        unit: "/inimene (alates 2 inimesest)",
+        note: "Üksi tulles 60€. Ponimetsa talli paketi või kuukaardi kasutajale 35€.",
       },
     ],
   },
