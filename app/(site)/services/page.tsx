@@ -108,7 +108,7 @@ const sections: PriceSection[] = [
     rows: [
       {
         label: "Hobuse ülalpidamisteenus",
-        price: "200€",
+        price: "250€",
         unit: "/kuu",
         note:
           "Hobusel on kindel boksikoht. Hobune veedab päeva vastavalt ilmale koplis ning öösel 4 × 3 m boksis. Hind sisaldab hein/silo, vett, soola, 1× päevas jõusööda andmist (sööt omaniku poolt), talvel vajadusel tekitamist ning platsi kasutust grupitreeningute- ja muude broneeritud treeningute välisel ajal.",
