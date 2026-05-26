@@ -26,17 +26,17 @@ const sections: PriceSection[] = [
     rows: [
       {
         label: "1× nädalas (4 trenni kuus)",
-        price: "80€ / 75€*",
+        price: "80€",
         price2: "70€",
       },
       {
         label: "2× nädalas (8 trenni kuus)",
-        price: "135€ / 125€*",
+        price: "135€",
         price2: "120€",
       },
       {
         label: "3× nädalas (12 trenni kuus)",
-        price: "175€ / 160€*",
+        price: "175€",
         price2: "150€",
       },
     ],
@@ -44,7 +44,7 @@ const sections: PriceSection[] = [
       "Grupitreeningutel osaleja paneb hobuse iseseisvalt valmis ning sõidab erinevate hobustega (va isikliku hobuse omanik). Kui on soov sõita ühe kindla hobusega, on võimalik võtta hobune täis- või poolrendile.",
       "Kuupaketiga treeningutel osalejatega sõlmitakse leping 6 kuuks. Tasumine toimub iga kalendrikuu alguses enne õpilase kalendrikuu esimest treeningut. Küsi tingimusi tutvumiseks.",
       "Vähemalt kahe sama pere liikme puhul, kes osalevad treeningutel korrakaartide ja/või lepingulise kuumaksu alusel, kehtib soodustus -10% iga liikme kohta.",
-      "* Avamiskuu soodushinnad.",
+      
     ],
   },
   {
