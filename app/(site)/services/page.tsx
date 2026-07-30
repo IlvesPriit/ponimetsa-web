@@ -81,13 +81,31 @@ const sections: PriceSection[] = [
   {
     title: "Ponijalutus ja elamussõidud",
     rows: [
-      { label: "Hobuse rentimine grupile 1 h (kuni 5 inimest)", price: "50€" },
-      { label: "Ponijalutus 0,5 h", price: "20€" },
       {
-        label: "Maastikusõit 1 h",
+        label: "Hobuse rentimine grupile 1 h (kuni 5 inimest)",
+        price: "50€",
+      },
+      {
+        label: "Ponijalutus 0,5 h",
+        price: "20€",
+      },
+      {
+        label: "Maastikusõit metsaradadel 1 h",
         price: "45€",
-        unit: "/inimene (alates 2 inimesest)",
-        note: "Üksi tulles 60€. Ponimetsa talli paketi või kuukaardi kasutajale 35€.",
+        unit: "/ inimene",
+        note: "Sobib algajatele ja edasijõudnutele. Individuaalsõidu hind 60€.",
+      },
+      {
+        label: "Rannamaastikusõit 1 h",
+        price: "75€",
+        unit: "/ inimene",
+        note: "Sobib edasijõudnud ratsutajatele. Individuaalsõidu hind 90€.",
+      },
+      {
+        label: "Rannamaastikusõit 2 h",
+        price: "130€",
+        unit: "/ inimene",
+        note: "Sobib ka algajatele. Individuaalsõidu hind 160€.",
       },
     ],
   },
