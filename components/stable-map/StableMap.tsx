@@ -19,6 +19,11 @@ type Props = {
     event: React.PointerEvent<SVGGElement>,
     object: StableMapObject,
   ) => void;
+  onHandlePointerDown?: (
+    event: React.PointerEvent<SVGCircleElement>,
+    object: FenceObject | RoadObject,
+    pointIndex: number,
+  ) => void;
   svgProps?: React.SVGProps<SVGSVGElement>;
   svgRef?: React.Ref<SVGSVGElement>;
 };
@@ -101,6 +106,7 @@ export default function StableMap({
   selectedId,
   interactive = false,
   onObjectPointerDown,
+  onHandlePointerDown,
   svgProps,
   svgRef,
 }: Props) {
@@ -136,6 +142,21 @@ export default function StableMap({
         </g>
       ))}
       {bounds ? <rect {...bounds} rx={8} className={styles.selection} /> : null}
+      {interactive && selected && selected.type !== "horse"
+        ? selected.points.slice(0, selected.type === "fence" && selected.shape === "rect" ? -1 : undefined).map((point, pointIndex) => (
+            <g key={`${selected.id}-handle-${pointIndex}`} className={styles.handleGroup}>
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={17}
+                fill="transparent"
+                pointerEvents="all"
+                onPointerDown={(event) => onHandlePointerDown?.(event, selected, pointIndex)}
+              />
+              <circle cx={point.x} cy={point.y} r={7} className={styles.nodeHandle} pointerEvents="none" />
+            </g>
+          ))
+        : null}
     </svg>
   );
 }

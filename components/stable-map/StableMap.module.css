@@ -24,6 +24,18 @@
   pointer-events: none;
 }
 
+.handleGroup {
+  cursor: move;
+}
+
+.nodeHandle {
+  fill: #ffffff;
+  stroke: #2f6f45;
+  stroke-width: 4;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 2px 3px rgba(16, 30, 20, .3));
+}
+
 .horseText {
   fill: #172018;
   font-size: 17px;

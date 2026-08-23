@@ -40,6 +40,14 @@ type DragState = {
   moved: boolean;
 };
 
+type HandleDragState = {
+  objectId: string;
+  pointIndex: number;
+  original: FenceObject | RoadObject;
+  before: StableMapDocument;
+  moved: boolean;
+};
+
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
 const uid = () => globalThis.crypto?.randomUUID?.() ?? `map-${Date.now()}-${Math.random()}`;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -67,6 +75,38 @@ function moveObject(object: StableMapObject, dx: number, dy: number, width: numb
   };
 }
 
+function moveObjectPoint(
+  object: FenceObject | RoadObject,
+  pointIndex: number,
+  target: MapPoint,
+): FenceObject | RoadObject {
+  const points = object.points.map((point) => ({ ...point }));
+  if (object.type === "fence" && object.shape === "rect" && points.length >= 5) {
+    if (pointIndex === 0) {
+      points[0] = target;
+      points[1].y = target.y;
+      points[3].x = target.x;
+    } else if (pointIndex === 1) {
+      points[1] = target;
+      points[0].y = target.y;
+      points[2].x = target.x;
+    } else if (pointIndex === 2) {
+      points[2] = target;
+      points[1].x = target.x;
+      points[3].y = target.y;
+    } else if (pointIndex === 3) {
+      points[3] = target;
+      points[0].x = target.x;
+      points[2].y = target.y;
+    }
+    points[4] = { ...points[0] };
+    return { ...object, points };
+  }
+
+  if (pointIndex >= 0 && pointIndex < points.length) points[pointIndex] = target;
+  return { ...object, points };
+}
+
 function formatPublishedAt(value: string | null) {
   if (!value) return "Pole veel avaldatud";
   return `Avaldatud ${new Date(value).toLocaleString("et-EE", { dateStyle: "short", timeStyle: "short" })}`;
@@ -92,14 +132,20 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   const [publishedAt, setPublishedAt] = useState(initialPublishedAt);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const dragRef = useRef<DragState | null>(null);
+  const handleDragRef = useRef<HandleDragState | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const pointFromClient = useCallback((clientX: number, clientY: number): MapPoint => {
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return { x: 0, y: 0 };
+    const svg = svgRef.current;
+    const matrix = svg?.getScreenCTM();
+    if (!svg || !matrix) return { x: 0, y: 0 };
+    const screenPoint = svg.createSVGPoint();
+    screenPoint.x = clientX;
+    screenPoint.y = clientY;
+    const mapPoint = screenPoint.matrixTransform(matrix.inverse());
     return {
-      x: clamp(((clientX - rect.left) / rect.width) * document.canvas.width, 0, document.canvas.width),
-      y: clamp(((clientY - rect.top) / rect.height) * document.canvas.height, 0, document.canvas.height),
+      x: clamp(mapPoint.x, 0, document.canvas.width),
+      y: clamp(mapPoint.y, 0, document.canvas.height),
     };
   }, [document.canvas.height, document.canvas.width]);
 
@@ -217,9 +263,40 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
+  const onHandlePointerDown = (
+    event: ReactPointerEvent<SVGCircleElement>,
+    object: FenceObject | RoadObject,
+    pointIndex: number,
+  ) => {
+    if (tool !== "select") return;
+    event.stopPropagation();
+    setSelectedId(object.id);
+    handleDragRef.current = {
+      objectId: object.id,
+      pointIndex,
+      original: clone(object),
+      before: clone(document),
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
   const onMapPointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
     const point = pointFromClient(event.clientX, event.clientY);
     if (drawingStart || roadPoints.length) setPointerPoint(point);
+    const handleDrag = handleDragRef.current;
+    if (handleDrag) {
+      const originalPoint = handleDrag.original.points[handleDrag.pointIndex];
+      if (originalPoint && Math.hypot(point.x - originalPoint.x, point.y - originalPoint.y) > 1.5) {
+        handleDrag.moved = true;
+      }
+      const resized = moveObjectPoint(handleDrag.original, handleDrag.pointIndex, point);
+      setDocument((current) => ({
+        ...current,
+        objects: current.objects.map((object) => object.id === handleDrag.objectId ? resized : object),
+      }));
+      return;
+    }
     const drag = dragRef.current;
     if (!drag) return;
     const dx = point.x - drag.start.x;
@@ -234,6 +311,16 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
 
   const onMapPointerUp = (event: ReactPointerEvent<SVGSVGElement>) => {
     const point = pointFromClient(event.clientX, event.clientY);
+    const handleDrag = handleDragRef.current;
+    if (handleDrag) {
+      if (handleDrag.moved) {
+        setHistory((items) => [...items.slice(-49), handleDrag.before]);
+        setFuture([]);
+        setDirty(true);
+      }
+      handleDragRef.current = null;
+      return;
+    }
     const drag = dragRef.current;
     if (drag) {
       if (drag.moved) {
@@ -359,7 +446,7 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   const placedHorseIds = new Set(document.objects.filter((object): object is HorseObject => object.type === "horse").map((object) => object.horseId));
   const selectedObject = document.objects.find((object) => object.id === selectedId);
   const instruction = tool === "select"
-    ? "Vali ja lohista objekti. Hobuse saad kaardile lohistada vasakust nimekirjast."
+    ? "Vali ja lohista objekti. Valitud aia või tee rohelisi punkte lohistades muudad selle pikkust, nurka või kuju."
     : tool === "road"
       ? "Klõpsa teeraja murdepunktid ning vajuta „Lõpeta tee“."
       : "Lohista kaardil alguspunktist lõpp-punkti.";
@@ -438,6 +525,7 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
             selectedId={selectedId}
             interactive
             onObjectPointerDown={onObjectPointerDown}
+            onHandlePointerDown={onHandlePointerDown}
             svgRef={svgRef}
             className={tool !== "select" ? styles.mapCrosshair : undefined}
             svgProps={{
