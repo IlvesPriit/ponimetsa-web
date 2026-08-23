@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "../../lib/supabase/server";
 
 type Props = {
-  searchParams?: Promise<{ next?: string }>;
+  searchParams?: Promise<{ next?: string; error?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
@@ -12,6 +12,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
     ? requestedNext
     : "/admin";
+  const loginError = params?.error;
 
   async function signIn(formData: FormData) {
     "use server";
@@ -23,8 +24,8 @@ export default async function LoginPage({ searchParams }: Props) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      // Lihtne MVP: viskame errori (Next näitab)
-      throw new Error(error.message);
+      const reason = error.code === "invalid_credentials" ? "credentials" : "auth";
+      redirect(`/login?next=${encodeURIComponent(next)}&error=${reason}`);
     }
 
     redirect(next);
@@ -32,10 +33,18 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-3xl font-semibold">Admin login</h1>
+      <h1 className="text-3xl font-semibold">Logi sisse</h1>
       <p className="mt-2 text-gray-700">
         Sisselogimine on vajalik, et kasutada Ponimetsa haldust ja kopliplaani ekraanivaadet.
       </p>
+
+      {loginError ? (
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900" role="alert">
+          {loginError === "credentials"
+            ? "E-post või parool ei ole õige. Kontrolli sisestust ja proovi uuesti."
+            : "Sisselogimine ebaõnnestus. Palun proovi mõne hetke pärast uuesti."}
+        </div>
+      ) : null}
 
       <form action={signIn} className="mt-8 space-y-4">
         <div>
