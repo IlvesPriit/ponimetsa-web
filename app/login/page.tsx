@@ -3,12 +3,15 @@ import Link from "next/link";
 import { createClient } from "../../lib/supabase/server";
 
 type Props = {
-  searchParams?: { next?: string };
+  searchParams?: Promise<{ next?: string }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
   const params = await searchParams;
-  const next = params?.next ?? "/admin";
+  const requestedNext = params?.next ?? "/admin";
+  const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
+    ? requestedNext
+    : "/admin";
 
   async function signIn(formData: FormData) {
     "use server";
@@ -31,7 +34,7 @@ export default async function LoginPage({ searchParams }: Props) {
     <div className="mx-auto max-w-md px-4 py-16">
       <h1 className="text-3xl font-semibold">Admin login</h1>
       <p className="mt-2 text-gray-700">
-        Sisselogimine on vajalik, et hallata broneeringuid ja vabu aegu.
+        Sisselogimine on vajalik, et kasutada Ponimetsa haldust ja kopliplaani ekraanivaadet.
       </p>
 
       <form action={signIn} className="mt-8 space-y-4">

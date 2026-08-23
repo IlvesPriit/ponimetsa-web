@@ -21,6 +21,9 @@ export default async function AdminPage() {
         <Link href="/admin/bookings" className="rounded-xl border px-5 py-3 text-sm font-medium">
           Broneeringud
         </Link>
+        <Link href="/admin/map" className="rounded-xl border border-green-700 bg-green-50 px-5 py-3 text-sm font-medium text-green-900">
+          Kopliplaan
+        </Link>
       </div>
     </div>
   );

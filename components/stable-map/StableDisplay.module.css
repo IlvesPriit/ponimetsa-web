@@ -1,0 +1,36 @@
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #172018;
+}
+
+.map { width: 100vw; height: 100vh; }
+
+.stamp {
+  position: fixed;
+  right: 18px;
+  bottom: 14px;
+  z-index: 101;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(16, 24, 18, .62);
+  color: rgba(255, 255, 255, .78);
+  font: 500 11px/1.2 Arial, Helvetica, sans-serif;
+}
+
+.offline {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  z-index: 102;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff3cd;
+  color: #664d03;
+  font: 700 12px/1.2 Arial, Helvetica, sans-serif;
+}

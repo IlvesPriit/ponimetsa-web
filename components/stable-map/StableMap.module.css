@@ -1,0 +1,33 @@
+.map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #263228;
+  user-select: none;
+  touch-action: none;
+}
+
+.interactiveObject {
+  cursor: grab;
+}
+
+.interactiveObject:active {
+  cursor: grabbing;
+}
+
+.selection {
+  fill: none;
+  stroke: #0ea5e9;
+  stroke-width: 3;
+  stroke-dasharray: 10 7;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.horseText {
+  fill: #172018;
+  font-size: 17px;
+  font-weight: 750;
+  font-family: Arial, Helvetica, sans-serif;
+  pointer-events: none;
+}
