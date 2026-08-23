@@ -50,7 +50,7 @@ export const EMPTY_STABLE_MAP: StableMapDocument = {
 };
 
 export const DEFAULT_HORSES: Horse[] = [
-  "Luna",
+  "Chiaro Diluna",
   "Aaton",
   "Tamador",
   "Arthug",
@@ -58,6 +58,13 @@ export const DEFAULT_HORSES: Horse[] = [
   "Redy Finn",
   "Laukinuke",
   "Ago",
+  "Tekiila",
+  "Dorian",
+  "Karma",
+  "Sirlincia RT",
+  "Morris",
+  "Deeli",
+  "Viktooria",
 ].map((name, index) => ({ id: `horse-${index + 1}`, name }));
 
 export function parseStableMapDocument(value: unknown): StableMapDocument {
