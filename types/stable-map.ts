@@ -65,6 +65,9 @@ export const DEFAULT_HORSES: Horse[] = [
   "Morris",
   "Deeli",
   "Viktooria",
+  "Noora",
+  "Leelo",
+  "Krahvinna",
 ].map((name, index) => ({ id: `horse-${index + 1}`, name }));
 
 export function parseStableMapDocument(value: unknown): StableMapDocument {
