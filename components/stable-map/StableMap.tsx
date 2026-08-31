@@ -137,7 +137,7 @@ export default function StableMap({
           ) : null}
           {interactive && object.type === "horse" ? (() => {
             const size = horseSize(object.name);
-            return <rect x={object.x - size.width / 2} y={object.y - size.height / 2} width={size.width} height={size.height} rx={size.height / 2} fill="transparent" pointerEvents="all" />;
+            return <rect x={object.x - size.width / 2 - 18} y={object.y - size.height / 2 - 18} width={size.width + 36} height={size.height + 36} rx={size.height / 2 + 18} fill="transparent" pointerEvents="all" />;
           })() : null}
         </g>
       ))}

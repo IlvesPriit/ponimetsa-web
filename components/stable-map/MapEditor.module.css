@@ -76,6 +76,7 @@
   cursor: grab;
 }
 .horsePlaced { border-color: #b8cfbe; background: #edf5ef; }
+.horsePending { border-color: #2f6f45; background: #dcecdf; box-shadow: 0 0 0 2px rgba(47, 111, 69, .16); }
 .horseDot { width: 9px; height: 9px; flex: none; border-radius: 50%; background: #2f6f45; }
 .horseName { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 700; white-space: nowrap; }
 .horseState { color: #68716a; font-size: 10px; }
@@ -87,7 +88,53 @@
   overflow: hidden;
   background: #263228;
 }
+.mapViewport {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.mapSurface {
+  height: auto;
+  min-width: 100%;
+  min-height: 100%;
+  aspect-ratio: 1672 / 941;
+  transform-origin: top left;
+}
 .mapCrosshair { cursor: crosshair; }
+.mapPan { cursor: grab; }
+.mapPan:active { cursor: grabbing; }
+.zoomControls {
+  position: absolute;
+  z-index: 8;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 7px 22px rgba(16, 28, 19, .2);
+}
+.zoomControls button {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  background: transparent;
+  color: #172018;
+  font-size: 24px;
+  cursor: pointer;
+}
+.zoomControls span {
+  min-width: 54px;
+  text-align: center;
+  color: #344039;
+  font-size: 12px;
+  font-weight: 750;
+}
+.mobileTabs { display: none; }
 .status {
   position: absolute;
   right: 14px;
@@ -114,12 +161,89 @@
 @media (max-width: 900px) {
   .title { display: none; }
   .layout { grid-template-columns: 205px minmax(0, 1fr); }
-  .topbar { align-items: flex-start; overflow-x: auto; }
+  .topbar { align-items: flex-start; }
+  .editTools { flex-wrap: nowrap; overflow-x: auto; }
 }
 
 @media (max-width: 680px) {
-  .layout { grid-template-columns: 1fr; grid-template-rows: auto minmax(55vh, 1fr); height: auto; min-height: calc(100vh - 66px); }
-  .sidebar { display: flex; gap: 14px; overflow-x: auto; border-right: 0; border-bottom: 1px solid #d9ded8; }
-  .group { min-width: 210px; margin: 0; border-bottom: 0; border-right: 1px solid #e1e5e0; padding: 0 14px 0 0; }
-  .stage { min-height: 58vh; }
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px;
+  }
+  .editTools {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    padding-bottom: 2px;
+  }
+  .editTools .button, .editTools .danger { min-height: 42px; white-space: nowrap; }
+  .spacer, .secondaryNav { display: none; }
+  .primary, .publish { min-height: 44px; }
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(280px, 1fr) minmax(190px, 32vh);
+    height: calc(100dvh - 122px);
+    min-height: 0;
+    overflow: hidden;
+  }
+  .stage {
+    order: 1;
+    min-height: 280px;
+    max-height: none;
+  }
+  .mapSurface {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1672 / 941;
+  }
+  .sidebar {
+    order: 2;
+    overflow-y: auto;
+    border-top: 1px solid #d9ded8;
+    border-right: 0;
+    padding: 12px;
+  }
+  .mobileTabs {
+    position: sticky;
+    z-index: 5;
+    top: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-bottom: 12px;
+    padding: 4px;
+    border-radius: 12px;
+    background: #eef1eb;
+  }
+  .mobileTabs button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #4c5850;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 750;
+  }
+  .mobileTabs .mobileTabActive { background: white; color: #245a37; box-shadow: 0 2px 8px rgba(28, 40, 31, .1); }
+  .group { margin: 0; padding: 0; border: 0; }
+  .mobilePanelHidden { display: none; }
+  .horseList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .horse { min-height: 46px; padding: 9px; }
+  .horseState { display: none; }
+  .status {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    width: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    font-size: 11px;
+  }
+  .status > span:nth-child(2) { display: none; }
+  .zoomControls { top: 8px; left: 8px; }
 }

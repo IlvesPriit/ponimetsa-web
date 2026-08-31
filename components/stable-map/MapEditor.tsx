@@ -24,7 +24,8 @@ import {
   type StableMapObject,
 } from "@/types/stable-map";
 
-type Tool = "select" | "fenceLine" | "fenceRect" | "road";
+type Tool = "select" | "pan" | "fenceLine" | "fenceRect" | "road";
+type MobilePanel = "horses" | "draw" | "project";
 
 type Props = {
   initialMap: StableMapDocument;
@@ -46,6 +47,13 @@ type HandleDragState = {
   original: FenceObject | RoadObject;
   before: StableMapDocument;
   moved: boolean;
+};
+
+type PanState = {
+  startX: number;
+  startY: number;
+  scrollLeft: number;
+  scrollTop: number;
 };
 
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
@@ -118,6 +126,9 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   const [future, setFuture] = useState<StableMapDocument[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tool, setTool] = useState<Tool>("select");
+  const [zoom, setZoom] = useState(1);
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel>("horses");
+  const [pendingHorse, setPendingHorse] = useState<Horse | null>(null);
   const [fenceStyle, setFenceStyle] = useState<FenceObject["style"]>("wood");
   const [fenceWeight, setFenceWeight] = useState(100);
   const [roadStyle, setRoadStyle] = useState<RoadObject["style"]>("gravel");
@@ -131,9 +142,17 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   const [error, setError] = useState<string | null>(null);
   const [publishedAt, setPublishedAt] = useState(initialPublishedAt);
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const stageRef = useRef<HTMLDivElement | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const handleDragRef = useRef<HandleDragState | null>(null);
+  const panRef = useRef<PanState | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 680px)").matches) {
+      setZoom(window.innerWidth < 500 ? 3 : 2);
+    }
+  }, []);
 
   const pointFromClient = useCallback((clientX: number, clientY: number): MapPoint => {
     const svg = svgRef.current;
@@ -234,8 +253,25 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
 
   const onMapPointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {
     if (event.button !== 0) return;
+    if (tool === "pan") {
+      const stage = stageRef.current;
+      if (!stage) return;
+      panRef.current = {
+        startX: event.clientX,
+        startY: event.clientY,
+        scrollLeft: stage.scrollLeft,
+        scrollTop: stage.scrollTop,
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
+      return;
+    }
     const point = pointFromClient(event.clientX, event.clientY);
     if (tool === "select") {
+      if (pendingHorse) {
+        placeHorse(pendingHorse, point);
+        setPendingHorse(null);
+        return;
+      }
       setSelectedId(null);
       return;
     }
@@ -250,6 +286,13 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   };
 
   const onObjectPointerDown = (event: ReactPointerEvent<SVGGElement>, object: StableMapObject) => {
+    if (tool === "pan") return;
+    if (pendingHorse) {
+      event.stopPropagation();
+      placeHorse(pendingHorse, pointFromClient(event.clientX, event.clientY));
+      setPendingHorse(null);
+      return;
+    }
     if (tool !== "select" || object.id === "preview") return;
     event.stopPropagation();
     setSelectedId(object.id);
@@ -282,6 +325,15 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   };
 
   const onMapPointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
+    const pan = panRef.current;
+    if (pan) {
+      const stage = stageRef.current;
+      if (stage) {
+        stage.scrollLeft = pan.scrollLeft - (event.clientX - pan.startX);
+        stage.scrollTop = pan.scrollTop - (event.clientY - pan.startY);
+      }
+      return;
+    }
     const point = pointFromClient(event.clientX, event.clientY);
     if (drawingStart || roadPoints.length) setPointerPoint(point);
     const handleDrag = handleDragRef.current;
@@ -310,6 +362,10 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
   };
 
   const onMapPointerUp = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (panRef.current) {
+      panRef.current = null;
+      return;
+    }
     const point = pointFromClient(event.clientX, event.clientY);
     const handleDrag = handleDragRef.current;
     if (handleDrag) {
@@ -380,7 +436,23 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
     setTool("select");
   };
 
+  const chooseHorse = (horse: Horse) => {
+    const existing = document.objects.find((object): object is HorseObject => object.type === "horse" && (object.horseId === horse.id || object.name === horse.name));
+    if (existing) {
+      setPendingHorse(null);
+      setTool("select");
+      setSelectedId(existing.id);
+      setMessage(`${horse.name} on kaardil valitud.`);
+      return;
+    }
+    setPendingHorse(horse);
+    setTool("select");
+    setSelectedId(null);
+    setMessage(`Puuduta kaardil kohta, kuhu ${horse.name} paigutada.`);
+  };
+
   const onHorseDragStart = (event: DragEvent<HTMLButtonElement>, horse: Horse) => {
+    setPendingHorse(null);
     event.dataTransfer.setData("application/x-ponimetsa-horse", JSON.stringify(horse));
     event.dataTransfer.effectAllowed = "move";
   };
@@ -445,7 +517,11 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
 
   const placedHorseIds = new Set(document.objects.filter((object): object is HorseObject => object.type === "horse").map((object) => object.horseId));
   const selectedObject = document.objects.find((object) => object.id === selectedId);
-  const instruction = tool === "select"
+  const instruction = pendingHorse
+    ? `Puuduta kaardil kohta, kuhu ${pendingHorse.name} paigutada.`
+    : tool === "pan"
+      ? "Lohista kaarti sobiva ala leidmiseks. See režiim ei liiguta objekte."
+      : tool === "select"
     ? "Vali ja lohista objekti. Valitud aia või tee rohelisi punkte lohistades muudad selle pikkust, nurka või kuju."
     : tool === "road"
       ? "Klõpsa teeraja murdepunktid ning vajuta „Lõpeta tee“."
@@ -455,28 +531,35 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
     <div className={styles.shell}>
       <header className={styles.topbar}>
         <div className={styles.title}><strong>Ponimetsa kopliplaan</strong><span>{formatPublishedAt(publishedAt)}</span></div>
-        <div className={styles.tools}>
-          <button className={`${styles.button} ${tool === "select" ? styles.active : ""}`} onClick={() => setTool("select")}>Vali</button>
+        <div className={`${styles.tools} ${styles.editTools}`}>
+          <button className={`${styles.button} ${tool === "select" && !pendingHorse ? styles.active : ""}`} onClick={() => { setTool("select"); setPendingHorse(null); }}>Vali</button>
+          <button className={`${styles.button} ${tool === "pan" ? styles.active : ""}`} onClick={() => { setTool("pan"); setPendingHorse(null); }}>Nihuta kaarti</button>
           <button className={styles.button} onClick={undo} disabled={!history.length}>↶ Tagasi</button>
           <button className={styles.button} onClick={redo} disabled={!future.length}>↷ Uuesti</button>
           <button className={styles.button} onClick={duplicateSelected} disabled={!selectedObject || selectedObject.type === "horse"}>Kopeeri</button>
           <button className={styles.danger} onClick={deleteSelected} disabled={!selectedId}>Kustuta</button>
         </div>
         <div className={styles.spacer} />
-        <Link className={styles.button} href="/admin">Admin</Link>
-        <Link className={styles.button} href="/display/stable" target="_blank">TV eelvaade</Link>
+        <Link className={`${styles.button} ${styles.secondaryNav}`} href="/admin">Admin</Link>
+        <Link className={`${styles.button} ${styles.secondaryNav}`} href="/display/stable" target="_blank">TV eelvaade</Link>
         <button className={styles.primary} onClick={() => persist("save")} disabled={busy}>Salvesta mustand</button>
         <button className={styles.publish} onClick={() => persist("publish")} disabled={busy}>Avalda ekraanile</button>
       </header>
 
       <main className={styles.layout}>
         <aside className={styles.sidebar}>
-          <section className={styles.group}>
+          <nav className={styles.mobileTabs} aria-label="Kaardiredaktori tööriistad">
+            <button className={mobilePanel === "horses" ? styles.mobileTabActive : ""} onClick={() => setMobilePanel("horses")}>Hobused</button>
+            <button className={mobilePanel === "draw" ? styles.mobileTabActive : ""} onClick={() => setMobilePanel("draw")}>Joonista</button>
+            <button className={mobilePanel === "project" ? styles.mobileTabActive : ""} onClick={() => setMobilePanel("project")}>Rohkem</button>
+          </nav>
+
+          <section className={`${styles.group} ${mobilePanel !== "draw" ? styles.mobilePanelHidden : ""}`}>
             <h2>Joonistamine</h2>
             <div className={styles.tools}>
-              <button className={`${styles.button} ${tool === "fenceLine" ? styles.active : ""}`} onClick={() => setTool("fenceLine")}>Aia joon</button>
-              <button className={`${styles.button} ${tool === "fenceRect" ? styles.active : ""}`} onClick={() => setTool("fenceRect")}>Aia ristkülik</button>
-              <button className={`${styles.button} ${tool === "road" ? styles.active : ""}`} onClick={() => setTool("road")}>Teerada</button>
+              <button className={`${styles.button} ${tool === "fenceLine" ? styles.active : ""}`} onClick={() => { setTool("fenceLine"); setPendingHorse(null); }}>Aia joon</button>
+              <button className={`${styles.button} ${tool === "fenceRect" ? styles.active : ""}`} onClick={() => { setTool("fenceRect"); setPendingHorse(null); }}>Aia ristkülik</button>
+              <button className={`${styles.button} ${tool === "road" ? styles.active : ""}`} onClick={() => { setTool("road"); setPendingHorse(null); }}>Teerada</button>
               {roadPoints.length ? <button className={styles.primary} onClick={finishRoad} disabled={roadPoints.length < 2}>Lõpeta tee</button> : null}
             </div>
             <label className={styles.field}>Aia välimus
@@ -493,22 +576,22 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
             </label>
           </section>
 
-          <section className={styles.group}>
+          <section className={`${styles.group} ${mobilePanel !== "horses" ? styles.mobilePanelHidden : ""}`}>
             <h2>Hobused</h2>
-            <p>Lohista nimi koplisse või klõpsa, et lisada ja valida.</p>
+            <p>Puuduta nime ja seejärel sobivat kohta kaardil. Arvutis saad nime ka lohistada.</p>
             <div className={styles.horseList}>
               {horses.map((horse) => {
                 const placed = placedHorseIds.has(horse.id) || document.objects.some((object) => object.type === "horse" && object.name === horse.name);
                 return (
-                  <button key={horse.id} draggable onDragStart={(event) => onHorseDragStart(event, horse)} onClick={() => placeHorse(horse)} className={`${styles.horse} ${placed ? styles.horsePlaced : ""}`}>
-                    <span className={styles.horseDot} /><span className={styles.horseName}>{horse.name}</span><span className={styles.horseState}>{placed ? "kaardil" : "lohista"}</span>
+                  <button key={horse.id} draggable onDragStart={(event) => onHorseDragStart(event, horse)} onClick={() => chooseHorse(horse)} className={`${styles.horse} ${placed ? styles.horsePlaced : ""} ${pendingHorse?.id === horse.id ? styles.horsePending : ""}`}>
+                    <span className={styles.horseDot} /><span className={styles.horseName}>{horse.name}</span><span className={styles.horseState}>{placed ? "kaardil" : pendingHorse?.id === horse.id ? "vali koht" : "puuduta"}</span>
                   </button>
                 );
               })}
             </div>
           </section>
 
-          <section className={styles.group}>
+          <section className={`${styles.group} ${mobilePanel !== "project" ? styles.mobilePanelHidden : ""}`}>
             <h2>Projektifail</h2>
             <p>Impordiga saad avada prototüübist salvestatud JSON-projekti.</p>
             <div className={styles.tools}>
@@ -520,25 +603,34 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
         </aside>
 
         <section className={styles.stage}>
-          <StableMap
-            map={renderedMap}
-            selectedId={selectedId}
-            interactive
-            onObjectPointerDown={onObjectPointerDown}
-            onHandlePointerDown={onHandlePointerDown}
-            svgRef={svgRef}
-            className={tool !== "select" ? styles.mapCrosshair : undefined}
-            svgProps={{
-              onPointerDown: onMapPointerDown,
-              onPointerMove: onMapPointerMove,
-              onPointerUp: onMapPointerUp,
-              onPointerCancel: onMapPointerUp,
-              onDragOver: (event) => event.preventDefault(),
-              onDrop: onMapDrop,
-            }}
-          />
+          <div className={styles.mapViewport} ref={stageRef}>
+            <div className={styles.mapSurface} style={{ width: `${zoom * 100}%` }}>
+              <StableMap
+                map={renderedMap}
+                selectedId={selectedId}
+                interactive
+                onObjectPointerDown={onObjectPointerDown}
+                onHandlePointerDown={onHandlePointerDown}
+                svgRef={svgRef}
+                className={tool === "pan" ? styles.mapPan : tool !== "select" ? styles.mapCrosshair : undefined}
+                svgProps={{
+                  onPointerDown: onMapPointerDown,
+                  onPointerMove: onMapPointerMove,
+                  onPointerUp: onMapPointerUp,
+                  onPointerCancel: onMapPointerUp,
+                  onDragOver: (event) => event.preventDefault(),
+                  onDrop: onMapDrop,
+                }}
+              />
+            </div>
+          </div>
+          <div className={styles.zoomControls} aria-label="Kaardi suurendus">
+            <button onClick={() => setZoom((value) => Math.max(1, Number((value - .25).toFixed(2))))} aria-label="Vähenda kaarti">−</button>
+            <span>{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom((value) => Math.min(3.5, Number((value + .25).toFixed(2))))} aria-label="Suurenda kaarti">+</button>
+          </div>
           <div className={styles.status}>
-            <span><strong>{tool === "select" ? "Vali" : tool === "road" ? "Teerada" : "Aed"}:</strong> {instruction}</span>
+            <span><strong>{pendingHorse ? "Paiguta hobune" : tool === "select" ? "Vali" : tool === "pan" ? "Nihuta" : tool === "road" ? "Teerada" : "Aed"}:</strong> {instruction}</span>
             <span>{dirty ? <><i className={styles.dirty} />Salvestamata</> : "Salvestatud"} · {document.objects.length} objekti</span>
             {message ? <span className={styles.message}>{message}</span> : null}
             {error ? <span className={styles.error}>{error}</span> : null}
