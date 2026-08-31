@@ -268,8 +268,10 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
     const point = pointFromClient(event.clientX, event.clientY);
     if (tool === "select") {
       if (pendingHorse) {
+        const horseName = pendingHorse.name;
         placeHorse(pendingHorse, point);
         setPendingHorse(null);
+        setMessage(`${horseName} on kaardile paigutatud.`);
         return;
       }
       setSelectedId(null);
@@ -289,8 +291,10 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
     if (tool === "pan") return;
     if (pendingHorse) {
       event.stopPropagation();
+      const horseName = pendingHorse.name;
       placeHorse(pendingHorse, pointFromClient(event.clientX, event.clientY));
       setPendingHorse(null);
+      setMessage(`${horseName} on kaardile paigutatud.`);
       return;
     }
     if (tool !== "select" || object.id === "preview") return;
@@ -553,6 +557,11 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
             <button className={mobilePanel === "draw" ? styles.mobileTabActive : ""} onClick={() => setMobilePanel("draw")}>Joonista</button>
             <button className={mobilePanel === "project" ? styles.mobileTabActive : ""} onClick={() => setMobilePanel("project")}>Rohkem</button>
           </nav>
+          {error || pendingHorse || message ? (
+            <div className={`${styles.mobileNotice} ${error ? styles.mobileNoticeError : ""}`} role={error ? "alert" : "status"}>
+              {error ?? (pendingHorse ? `Puuduta kaardil kohta, kuhu ${pendingHorse.name} paigutada.` : message)}
+            </div>
+          ) : null}
 
           <section className={`${styles.group} ${mobilePanel !== "draw" ? styles.mobilePanelHidden : ""}`}>
             <h2>Joonistamine</h2>
@@ -563,10 +572,10 @@ export default function MapEditor({ initialMap, horses, publishedAt: initialPubl
               {roadPoints.length ? <button className={styles.primary} onClick={finishRoad} disabled={roadPoints.length < 2}>Lõpeta tee</button> : null}
             </div>
             <label className={styles.field}>Aia välimus
-              <select value={fenceStyle} onChange={(event) => setFenceStyle(event.target.value as FenceObject["style"])}><option value="wood">Puitaed</option><option value="tape">Valge lint</option></select>
+              <select value={fenceStyle} onChange={(event) => setFenceStyle(event.target.value as FenceObject["style"])}><option value="wood">Puitaed</option><option value="tape">Valge lint</option><option value="temporary">Ajutine koppel</option></select>
             </label>
             <label className={styles.field}>Aia jämedus: {fenceWeight}%
-              <input type="range" min="60" max="180" step="10" value={fenceWeight} onChange={(event) => setFenceWeight(Number(event.target.value))} />
+              <input type="range" min="30" max="180" step="10" value={fenceWeight} onChange={(event) => setFenceWeight(Number(event.target.value))} />
             </label>
             <label className={styles.field}>Tee välimus
               <select value={roadStyle} onChange={(event) => setRoadStyle(event.target.value as RoadObject["style"])}><option value="gravel">Kruusatee</option><option value="asphalt">Asfalt</option></select>

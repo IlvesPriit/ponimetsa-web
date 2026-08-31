@@ -5,7 +5,7 @@ export type FenceObject = {
   type: "fence";
   shape: "line" | "rect";
   points: MapPoint[];
-  style: "wood" | "tape";
+  style: "wood" | "tape" | "temporary";
   weight: number;
 };
 

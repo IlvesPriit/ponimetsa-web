@@ -38,7 +38,15 @@ function horseSize(name: string) {
 
 function Fence({ object }: { object: FenceObject }) {
   const path = pathFromPoints(object.points);
-  const width = Math.max(5, object.weight / 14);
+  const width = Math.max(2.5, object.weight / 14);
+  if (object.style === "temporary") {
+    return (
+      <>
+        <path d={path} fill="none" stroke="rgba(21,31,23,.65)" strokeWidth={width + 3} strokeDasharray="14 12" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={path} fill="none" stroke="#ffffff" strokeWidth={width} strokeDasharray="14 12" strokeLinecap="round" strokeLinejoin="round" />
+      </>
+    );
+  }
   if (object.style === "tape") {
     return (
       <>

@@ -135,6 +135,7 @@
   font-weight: 750;
 }
 .mobileTabs { display: none; }
+.mobileNotice { display: none; }
 .status {
   position: absolute;
   right: 14px;
@@ -228,22 +229,23 @@
     font-weight: 750;
   }
   .mobileTabs .mobileTabActive { background: white; color: #245a37; box-shadow: 0 2px 8px rgba(28, 40, 31, .1); }
+  .mobileNotice {
+    display: block;
+    margin: 0 0 10px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    background: #edf5ef;
+    color: #245a37;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+  }
+  .mobileNoticeError { background: #fff0f0; color: #a63737; }
   .group { margin: 0; padding: 0; border: 0; }
   .mobilePanelHidden { display: none; }
   .horseList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .horse { min-height: 46px; padding: 9px; }
   .horseState { display: none; }
-  .status {
-    position: absolute;
-    right: 8px;
-    bottom: 8px;
-    left: 8px;
-    width: auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-    font-size: 11px;
-  }
-  .status > span:nth-child(2) { display: none; }
+  .status { display: none; }
   .zoomControls { top: 8px; left: 8px; }
 }
