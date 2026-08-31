@@ -60,7 +60,7 @@ const sections: PriceSection[] = [
       },
       { label: "5× kaart", price: "110€" },
       { label: "10× kaart", price: "190€" },
-      { label: "1× algõppe eratrenn (0,5–1 h)", price: "45€" },
+      { label: "1× algõppe eratrenn (0,5–1 h)", price: "40€" },
       { label: "1× ponisõbra trenn (~0,5 h)", price: "30€" },
     ],
     footnotes: [
@@ -152,8 +152,8 @@ const sections: PriceSection[] = [
         price: "60€",
         note: "Treiler + auto + juht. Lisandub 0,5€ kilomeetri kohta Ponimetsa klientidele, välistele klientidele 0,8€ kilomeetri kohta.",
       },
-      { label: "Ponijalutus üritusel 1 h 1 poniga", price: "100€", note: "Treiler + auto + juht + 1 poni." },
-      { label: "Ponijalutus üritusel 1 h 2 poniga", price: "180€", note: "Treiler + auto + juht + 2 poni." },
+      { label: "Ponijalutus üritusel 1 h 1 poniga", price: "100€", note: "Sisaldab transporti, 1 poni ja 1 ponijalutuse läbiviijat." },
+      { label: "Ponijalutus üritusel 1 h 2 poniga", price: "180€", note: "Sisaldab transporti, 2 poni ja 2 ponijalutuse läbiviijat." },
     ],
     footnotes: [
       "Ponijalutus üritusel: 20 km raadiuses kodutallist. Kaugemale lisandub 1€ kilomeetri kohta.",

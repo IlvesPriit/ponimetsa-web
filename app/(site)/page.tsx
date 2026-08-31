@@ -49,8 +49,8 @@ const services: readonly Service[] = [
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
-        "Ponisõit juhendaja käekõrval – alates 10 minutist (5 min / 5 € ja 30 min / 20 €)",
-        "Väikese ponisõbra trenn – poni harjamise ja saduldamise õppimine + kuni 15 min ponisõitu (25 € / kord)",
+        "Ponisõit juhendaja käekõrval – alates 10 minutist (5 min / 5 € ja 30 min / 30 €)",
+        "Väikese ponisõbra trenn – poni harjamise ja saduldamise õppimine + kuni 15 min ponisõitu (30 € / kord)",
         "Ponitunnid väikelaste gruppidele – tutvume talli ja ponidega, vaatame mida ponid söövad, harjame ja saduldame poni ning saame sõita",
       ],
       note: "Ponitundide toimumisajad lisame oma sotsiaalmeediakontodele. Võimalik tellida ka eraüritus – võta meiega ühendust.",
