@@ -55,13 +55,13 @@ const sections: PriceSection[] = [
       { label: "Lisatrenn grupis (lisaks kuupaketile)", price: "15€" },
       {
         label: "Eratrenn (kuni 2 sõitjat)",
-        price: "35€",
+        price: "45€",
         note: "Ponimetsa talli kuupaketi kasutajale 25€.",
       },
       { label: "5× kaart", price: "110€" },
       { label: "10× kaart", price: "190€" },
-      { label: "1× algõppe eratrenn (0,5–1 h)", price: "35€" },
-      { label: "1× ponisõbra trenn (~0,5 h)", price: "25€" },
+      { label: "1× algõppe eratrenn (0,5–1 h)", price: "45€" },
+      { label: "1× ponisõbra trenn (~0,5 h)", price: "30€" },
     ],
     footnotes: [
       "Korrakaarti saab kasutada 2 kuu jooksul pärast soetamist. Vähemalt kahe sama pere liikme puhul, kes osalevad treeningutel korrakaartide ja/või lepingulise kuumaksu alusel, kehtib soodustus -10% iga liikme kohta.",
@@ -87,7 +87,7 @@ const sections: PriceSection[] = [
       },
       {
         label: "Ponijalutus 0,5 h",
-        price: "20€",
+        price: "30€",
       },
       {
         label: "Maastikusõit metsaradadel 1 h",
@@ -145,11 +145,11 @@ const sections: PriceSection[] = [
   {
     title: "Muud teenused",
     rows: [
-      { label: "Hobuse sõitmine", price: "20€", unit: "/kord", note: "Pikema perioodi vältel kokkuleppel." },
-      { label: "Treileri rent", price: "35€", unit: "/ööpäev" },
+      { label: "Hobuse sõitmine", price: "25€", unit: "/kord", note: "Pikema perioodi vältel kokkuleppel." },
+      { label: "Treileri rent", price: "40€", unit: "/ööpäev" },
       {
         label: "Hobuste transport treileriga",
-        price: "50€",
+        price: "60€",
         note: "Treiler + auto + juht. Lisandub 0,5€ kilomeetri kohta Ponimetsa klientidele, välistele klientidele 0,8€ kilomeetri kohta.",
       },
       { label: "Ponijalutus üritusel 1 h 1 poniga", price: "100€", note: "Treiler + auto + juht + 1 poni." },

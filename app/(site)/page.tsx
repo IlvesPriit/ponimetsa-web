@@ -67,7 +67,7 @@ const services: readonly Service[] = [
         "Soovi korral 1× päevas jõusööda andmine (sööt hobuomaniku poolt)",
         "Vajadusel talvisel perioodil tekitamine",
         "Hobuse majutus lühiajaliselt – 25 € / 24 h",
-        "Hobuse majutus pikaajaliselt – 200 € / kuu",
+        "Hobuse majutus pikaajaliselt – 300 € / kuu",
       ],
     },
   ];
