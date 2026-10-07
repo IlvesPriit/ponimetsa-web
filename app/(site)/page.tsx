@@ -49,7 +49,7 @@ const services: readonly Service[] = [
       intro:
         "Ponidega sõbraks saamiseks ja tallielu avastamiseks pakume väiksematele lastele mitut toredat võimalust.",
       bullets: [
-        "Ponisõit juhendaja käekõrval – alates 10 minutist (5 min / 5 € ja 30 min / 30 €)",
+        "Ponisõit juhendaja käekõrval – alates 10 minutist (5 min / 5 €)",
         "Väikese ponisõbra trenn – poni harjamise ja saduldamise õppimine + kuni 15 min ponisõitu (30 € / kord)",
         "Ponitunnid väikelaste gruppidele – tutvume talli ja ponidega, vaatame mida ponid söövad, harjame ja saduldame poni ning saame sõita",
       ],
@@ -108,7 +108,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* HERO */}
-<section className="relative min-h-[80vh] w-full overflow-hidden">
+<section id="home" className="relative min-h-[80vh] w-full overflow-hidden">
   <Image
     src="/images/hero2.jpeg"
     alt="Ponimetsa Tall"
@@ -133,6 +133,24 @@ export default function HomePage() {
 
     </div>
   </div>
+
+  {/* Toetuse logo peab olema nähtav ka avalehe avavaates. */}
+  <Link
+    href="#eu-support"
+    aria-label="Vaata Euroopa Liidu kaasrahastatud projekti infot"
+    className="absolute bottom-5 right-4 z-10 w-48 rounded-xl border border-white/70 bg-white/95 p-2 shadow-lg backdrop-blur-sm transition hover:bg-white sm:bottom-7 sm:right-6 sm:w-56"
+  >
+    <Image
+      src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
+      alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
+      width={1022}
+      height={594}
+      loading="eager"
+      unoptimized
+      className="h-auto w-full"
+      sizes="(min-width: 640px) 224px, 192px"
+    />
+  </Link>
 
   {/* fade to next section – light/dark mode ühtlane */}
   <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-white dark:to-black" />
@@ -287,6 +305,37 @@ export default function HomePage() {
       {/* CONTACT */}
       <section id="contact" className="bg-neutral-50">
         <div className="mx-auto max-w-6xl px-4 py-16">
+          <div
+            id="eu-support"
+            className="scroll-mt-28 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+          >
+            <div className="grid items-center gap-8 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_360px] md:p-10">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-800">
+                  Euroopa Liidu kaasrahastatud projekt
+                </p>
+                <h2 className="mt-3 max-w-2xl text-2xl font-semibold leading-tight text-gray-900 sm:text-3xl">
+                  Aastaringsete ratsateenuste kättesaadavuse parandamine maneeži rajamisega
+                </h2>
+                <p className="mt-4 max-w-2xl leading-relaxed text-gray-700">
+                  Projekti eesmärk on parandada aastaringsete ratsateenuste kättesaadavust
+                  uue maneeži rajamisega.
+                </p>
+              </div>
+
+              <Image
+                src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
+                alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
+                width={1022}
+                height={594}
+                unoptimized
+                className="h-auto w-full max-w-[360px] justify-self-start md:justify-self-end"
+                sizes="(min-width: 768px) 360px, min(100vw - 80px, 360px)"
+              />
+            </div>
+          </div>
+
+          <div className="mt-16">
           <h2 className="text-center text-3xl font-semibold text-gray-900">
             Kontakt
           </h2>
@@ -347,6 +396,7 @@ export default function HomePage() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
+          </div>
           </div>
         </div>
       </section>
