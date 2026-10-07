@@ -114,7 +114,7 @@ export default function HomePage() {
     alt="Ponimetsa Tall"
     fill
     priority
-    className="object-cover"
+    className="object-cover md:object-[center_65%]"
   />
 
   {/* overlay – parem loetavus */}
@@ -140,11 +140,8 @@ export default function HomePage() {
       <Link
         href="#eu-support"
         aria-label="Vaata Euroopa Liidu kaasrahastatud projekti infot"
-        className="flex items-center gap-4 text-gray-700 transition hover:text-gray-900"
+        className="flex items-center text-gray-700 transition hover:text-gray-900"
       >
-        <span className="hidden text-xs font-medium uppercase tracking-[0.12em] sm:block">
-          Euroopa Liidu kaasrahastatud projekt
-        </span>
         <Image
           src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
           alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
@@ -152,8 +149,8 @@ export default function HomePage() {
           height={594}
           loading="eager"
           unoptimized
-          className="h-auto w-44 sm:w-48"
-          sizes="(min-width: 640px) 192px, 176px"
+          className="h-auto w-44 sm:w-36"
+          sizes="(min-width: 640px) 144px, 176px"
         />
       </Link>
     </div>
