@@ -135,22 +135,29 @@ export default function HomePage() {
   </div>
 
   {/* Toetuse logo peab olema nähtav ka avalehe avavaates. */}
-  <Link
-    href="#eu-support"
-    aria-label="Vaata Euroopa Liidu kaasrahastatud projekti infot"
-    className="absolute bottom-5 right-4 z-10 w-48 rounded-xl border border-white/70 bg-white/95 p-2 shadow-lg backdrop-blur-sm transition hover:bg-white sm:bottom-7 sm:right-6 sm:w-56"
-  >
-    <Image
-      src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
-      alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
-      width={1022}
-      height={594}
-      loading="eager"
-      unoptimized
-      className="h-auto w-full"
-      sizes="(min-width: 640px) 224px, 192px"
-    />
-  </Link>
+  <div className="absolute inset-x-0 bottom-0 z-10 border-t border-white/70 bg-white/95 backdrop-blur-sm">
+    <div className="mx-auto flex max-w-6xl justify-center px-4 py-1 sm:justify-end">
+      <Link
+        href="#eu-support"
+        aria-label="Vaata Euroopa Liidu kaasrahastatud projekti infot"
+        className="flex items-center gap-4 text-gray-700 transition hover:text-gray-900"
+      >
+        <span className="hidden text-xs font-medium uppercase tracking-[0.12em] sm:block">
+          Euroopa Liidu kaasrahastatud projekt
+        </span>
+        <Image
+          src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
+          alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
+          width={1022}
+          height={594}
+          loading="eager"
+          unoptimized
+          className="h-auto w-44 sm:w-48"
+          sizes="(min-width: 640px) 192px, 176px"
+        />
+      </Link>
+    </div>
+  </div>
 
   {/* fade to next section – light/dark mode ühtlane */}
   <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-white dark:to-black" />
@@ -305,37 +312,6 @@ export default function HomePage() {
       {/* CONTACT */}
       <section id="contact" className="bg-neutral-50">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <div
-            id="eu-support"
-            className="scroll-mt-28 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
-          >
-            <div className="grid items-center gap-8 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_360px] md:p-10">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-800">
-                  Euroopa Liidu kaasrahastatud projekt
-                </p>
-                <h2 className="mt-3 max-w-2xl text-2xl font-semibold leading-tight text-gray-900 sm:text-3xl">
-                  Aastaringsete ratsateenuste kättesaadavuse parandamine maneeži rajamisega
-                </h2>
-                <p className="mt-4 max-w-2xl leading-relaxed text-gray-700">
-                  Projekti eesmärk on parandada aastaringsete ratsateenuste kättesaadavust
-                  uue maneeži rajamisega.
-                </p>
-              </div>
-
-              <Image
-                src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
-                alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
-                width={1022}
-                height={594}
-                unoptimized
-                className="h-auto w-full max-w-[360px] justify-self-start md:justify-self-end"
-                sizes="(min-width: 768px) 360px, min(100vw - 80px, 360px)"
-              />
-            </div>
-          </div>
-
-          <div className="mt-16">
           <h2 className="text-center text-3xl font-semibold text-gray-900">
             Kontakt
           </h2>
@@ -397,6 +373,31 @@ export default function HomePage() {
               />
             </div>
           </div>
+
+          <div
+            id="eu-support"
+            className="mx-auto mt-12 max-w-5xl scroll-mt-28 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+          >
+            <div className="grid items-center gap-6 p-5 sm:p-6 md:grid-cols-[minmax(0,1fr)_280px] md:p-8">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-800">
+                  Euroopa Liidu kaasrahastatud projekt
+                </p>
+                <h2 className="mt-2 max-w-2xl text-xl font-semibold leading-tight text-gray-900 sm:text-2xl">
+                  Aastaringsete ratsateenuste kättesaadavuse parandamine maneeži rajamisega
+                </h2>
+              </div>
+
+              <Image
+                src="/images/eu-kaasrahastanud-kaksiklogo-est-rgb.png"
+                alt="Kaasrahastanud Euroopa Liit. Eesti tuleviku heaks."
+                width={1022}
+                height={594}
+                unoptimized
+                className="h-auto w-full max-w-[280px] justify-self-start md:justify-self-end"
+                sizes="(min-width: 768px) 280px, min(100vw - 72px, 280px)"
+              />
+            </div>
           </div>
         </div>
       </section>
