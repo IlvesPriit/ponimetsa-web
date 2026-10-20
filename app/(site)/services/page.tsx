@@ -56,7 +56,7 @@ const sections: PriceSection[] = [
       {
         label: "Eratrenn (kuni 2 sõitjat)",
         price: "45€",
-        note: "Ponimetsa talli kuupaketi kasutajale 25€.",
+        note: "Ponimetsa talli kuupaketi kasutajale 35€.",
       },
       { label: "5× kaart", price: "110€" },
       { label: "10× kaart", price: "190€" },
