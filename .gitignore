@@ -50,3 +50,7 @@ next-env.d.ts
 
 schema.sql
 schema_public.sql
+
+# Contains rider and parent personal data. Keep local and out of version control.
+/supabase/private-seeds/*.sql
+/docs/training-data-report.md

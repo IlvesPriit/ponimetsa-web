@@ -14,7 +14,13 @@ export default async function AdminPage() {
         Sisselogitud kasutaja: <span className="font-medium">{data.user?.email}</span>
       </p>
 
-      <div className="mt-8 flex gap-3">
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link
+          href="/admin/training"
+          className="rounded-xl border border-green-700 bg-green-50 px-5 py-3 text-sm font-medium text-green-900"
+        >
+          Grupitreeningud
+        </Link>
         <Link href="/admin/slots" className="rounded-xl border px-5 py-3 text-sm font-medium">
           Vabad ajad
         </Link>
