@@ -29,12 +29,31 @@
     background-color: #142019 !important;
   }
 
+  [class~="bg-[#f5f3ed]"],
+  [class~="bg-[#ebe8df]"],
+  .bg-stone-50,
+  .bg-stone-100 {
+    background-color: #142019 !important;
+  }
+
+  [class~="bg-[#dce7db]"] {
+    background-color: #193523 !important;
+  }
+
   .bg-green-50 {
     background-color: #10271a !important;
   }
 
   .bg-amber-50 {
     background-color: #2b2110 !important;
+  }
+
+  .bg-green-100 {
+    background-color: #193c27 !important;
+  }
+
+  .bg-amber-100 {
+    background-color: #3b2b0e !important;
   }
 
   .bg-red-50 {
@@ -54,6 +73,12 @@
     color: #f3f4f6 !important;
   }
 
+  .text-stone-900,
+  .text-stone-800,
+  .text-stone-700 {
+    color: #f3f4f6 !important;
+  }
+
   .text-gray-600,
   .text-gray-500,
   .text-gray-400 {
@@ -61,6 +86,12 @@
   }
 
   .text-neutral-600 {
+    color: #c4cec8 !important;
+  }
+
+  .text-stone-600,
+  .text-stone-500,
+  .text-stone-400 {
     color: #c4cec8 !important;
   }
 
@@ -102,6 +133,12 @@
   .border-amber-200,
   .border-red-300 {
     border-color: #53665a !important;
+  }
+
+  .border-stone-100,
+  .border-stone-200,
+  .border-stone-300 {
+    border-color: #3c5044 !important;
   }
 
   input,

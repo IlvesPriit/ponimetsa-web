@@ -99,6 +99,7 @@ export default async function AdminTrainingPage({
   searchParams?: Promise<{ saved?: string }>;
 }) {
   await requireAdmin("/admin/training");
+  redirect("/admin/training/overview");
   const params = (await searchParams) ?? {};
 
   async function updatePolicy(formData: FormData) {
