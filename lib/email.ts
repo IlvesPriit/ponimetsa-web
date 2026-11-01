@@ -1,4 +1,5 @@
 // lib/email.ts
+import { formatEstonianRange } from "@/lib/estonian-date";
 type SendEmailArgs = {
     to: string | string[];
     subject: string;
@@ -59,11 +60,7 @@ type SendEmailArgs = {
   
   export function formatEtRange(start?: Date | null, end?: Date | null) {
     if (!start) return "";
-    const d = start.toLocaleDateString("et-EE");
-    const t1 = start.toLocaleTimeString("et-EE", { hour: "2-digit", minute: "2-digit" });
-    if (!end) return `${d} ${t1}`;
-    const t2 = end.toLocaleTimeString("et-EE", { hour: "2-digit", minute: "2-digit" });
-    return `${d} ${t1}–${t2}`;
+    return formatEstonianRange(start, end);
   }
   
   function esc(s: string) {

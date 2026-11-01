@@ -4,6 +4,7 @@ import { pool } from "../../../lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../lib/admin";
+import { formatEstonianDateTime } from "@/lib/estonian-date";
 
 
 function daysInMonth(year: number, month1to12: number) {
@@ -24,31 +25,6 @@ function assertValidDateParts(day: string, month: string, year: string, label: s
   if (d < 1 || d > dim) {
     throw new Error(`${label}: valitud kuupäeva ei eksisteeri (päevi kuus: ${String(dim).padStart(2, "0")})`);
   }
-}
-
-function formatEtDateTime(value: string | Date) {
-  const d = typeof value === "string" ? new Date(value) : value;
-
-  // Use Intl parts so we can force dots and 24h output reliably.
-  const parts = new Intl.DateTimeFormat("et-EE", {
-    timeZone: "Europe/Tallinn",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(d);
-
-  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-
-  const day = get("day");
-  const month = get("month");
-  const year = get("year");
-  const hour = get("hour");
-  const minute = get("minute");
-
-  return `${day}.${month}.${year} ${hour}:${minute}`;
 }
 
 function getTallinnParts(date: Date) {
@@ -483,7 +459,7 @@ export default async function AdminSlotsPage({
               >
                 <div className="text-sm">
                   <div className="font-medium">
-                    {formatEtDateTime(s.start_at)} – {formatEtDateTime(s.end_at)}
+                    {formatEstonianDateTime(s.start_at)} – {formatEstonianDateTime(s.end_at)}
                   </div>
                   <div className="text-gray-600">
                     {s.is_active ? "Aktiivne" : "Mitteaktiivne"}

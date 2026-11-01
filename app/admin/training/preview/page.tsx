@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin";
 import { pool } from "@/lib/db";
 import { loadPortalForContact, loadPortalForRider } from "@/lib/training-portal";
 import { TrainingPortalView } from "@/components/training/TrainingPortalView";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 type ContactChoice = {
   id: string;
@@ -68,7 +69,7 @@ export default async function TrainingPreviewPage({
                   </option>
                 ))}
               </select>
-              <button className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Näita</button>
+              <SubmitButton pendingLabel="Laadin…" className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Näita</SubmitButton>
             </form>
 
             <form method="get" className="flex gap-2 rounded-2xl border bg-white p-3">
@@ -76,7 +77,7 @@ export default async function TrainingPreviewPage({
                 <option value="">Vali ratsanik…</option>
                 {riderRes.rows.map((rider) => <option key={rider.id} value={rider.id}>{rider.display_name}</option>)}
               </select>
-              <button className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Näita</button>
+              <SubmitButton pendingLabel="Laadin…" className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Näita</SubmitButton>
             </form>
           </div>
         </div>

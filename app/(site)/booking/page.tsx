@@ -4,6 +4,7 @@ import { pool } from "@/lib/db";
 import { redirect } from "next/navigation";
 import ServicePicker from "./ServicePicker";
 import BookingCalendar from "./BookingCalendar";
+import { formatEstonianDateTime, formatEstonianRange, formatEstonianTime } from "@/lib/estonian-date";
 
 type PageProps = {
   searchParams?: Promise<{ service?: string; kind?: string; error?: string }>;
@@ -47,14 +48,7 @@ function addMinutes(d: Date, minutes: number) {
 }
 
 function fmtEt(d: Date) {
-  return d.toLocaleString("et-EE", {
-    hour12: false,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatEstonianDateTime(d);
 }
 
 
@@ -161,19 +155,7 @@ async function sendEmail(args: SendEmailArgs) {
 
 function formatEtRange(start?: Date | null, end?: Date | null) {
   if (!start) return "";
-  const d = start.toLocaleDateString("et-EE");
-  const t1 = start.toLocaleTimeString("et-EE", {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  if (!end) return `${d} ${t1}`;
-  const t2 = end.toLocaleTimeString("et-EE", {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return `${d} ${t1}–${t2}`;
+  return formatEstonianRange(start, end);
 }
 
 function esc(s: string) {
@@ -487,11 +469,7 @@ export default async function BookingPage({ searchParams }: PageProps) {
 
     const chosenText =
       svcDef.bookable && startAt && endAt
-        ? `Soovitud aeg: ${fmtEt(startAt)} – ${endAt.toLocaleTimeString("et-EE", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-          })}\nTeenus: ${svcDef.title}`
+        ? `Soovitud aeg: ${fmtEt(startAt)}–${formatEstonianTime(endAt)}\nTeenus: ${svcDef.title}`
         : `Teenus: ${svcDef.title}`;
 
     if (hasStartEnd && svcDef.bookable && startAt && endAt) {

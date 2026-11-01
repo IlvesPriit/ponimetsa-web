@@ -1,26 +1,15 @@
 import Link from "next/link";
 import type { TrainingPortalData } from "@/lib/training-portal";
+import { formatEstonianDate, formatEstonianDateTime } from "@/lib/estonian-date";
 
 const WEEKDAYS = ["", "E", "T", "K", "N", "R", "L", "P"];
 
 function dateTime(value: string | Date) {
-  return new Intl.DateTimeFormat("et-EE", {
-    timeZone: "Europe/Tallinn",
-    weekday: "short",
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
+  return formatEstonianDateTime(value, true);
 }
 
 function dateOnly(value: string | Date) {
-  return new Intl.DateTimeFormat("et-EE", {
-    timeZone: "Europe/Tallinn",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(value));
+  return formatEstonianDate(value);
 }
 
 function bookingStatus(status: string) {

@@ -13,6 +13,7 @@ import {
 } from "react";
 import StableMap from "./StableMap";
 import styles from "./MapEditor.module.css";
+import { formatEstonianDateTime } from "@/lib/estonian-date";
 import {
   parseStableMapDocument,
   type FenceObject,
@@ -117,7 +118,7 @@ function moveObjectPoint(
 
 function formatPublishedAt(value: string | null) {
   if (!value) return "Pole veel avaldatud";
-  return `Avaldatud ${new Date(value).toLocaleString("et-EE", { dateStyle: "short", timeStyle: "short" })}`;
+  return `Avaldatud ${formatEstonianDateTime(value)}`;
 }
 
 export default function MapEditor({ initialMap, horses, publishedAt: initialPublishedAt }: Props) {

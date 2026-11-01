@@ -3,6 +3,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { createClient } from "../../lib/supabase/server";
 import { pool } from "@/lib/db";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 type Props = {
   searchParams?: Promise<{ next?: string; error?: string; sent?: string }>;
@@ -102,9 +103,9 @@ export default async function LoginPage({ searchParams }: Props) {
           />
         </div>
 
-        <button className="w-full rounded-xl bg-green-800 px-5 py-3 text-sm font-medium text-white hover:opacity-90">
+        <SubmitButton pendingLabel="Saadan linki…" className="w-full rounded-xl bg-green-800 px-5 py-3 text-sm font-medium text-white hover:opacity-90">
           Saada ühekordne sisselogimislink
-        </button>
+        </SubmitButton>
       </form>
 
       <div className="my-8 flex items-center gap-3 text-xs uppercase tracking-wide text-gray-400"><span className="h-px flex-1 bg-gray-200" />Administraator<span className="h-px flex-1 bg-gray-200" /></div>
@@ -126,9 +127,9 @@ export default async function LoginPage({ searchParams }: Props) {
           />
         </div>
 
-        <button className="w-full rounded-xl bg-black px-5 py-3 text-sm font-medium text-white hover:opacity-90">
+        <SubmitButton pendingLabel="Login sisse…" className="w-full rounded-xl bg-black px-5 py-3 text-sm font-medium text-white hover:opacity-90">
           Logi sisse
-        </button>
+        </SubmitButton>
       </form>
 
       <div className="mt-6 text-sm text-gray-600">

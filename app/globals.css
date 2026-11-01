@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light dark;
 }
 
 @theme inline {
@@ -14,8 +15,116 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b1410;
+    --foreground: #f3f4f6;
+  }
+
+  body,
+  .bg-white {
+    background-color: #0b1410 !important;
+    color: #f3f4f6;
+  }
+
+  .bg-neutral-50 {
+    background-color: #142019 !important;
+  }
+
+  .bg-green-50 {
+    background-color: #10271a !important;
+  }
+
+  .bg-amber-50 {
+    background-color: #2b2110 !important;
+  }
+
+  .bg-red-50 {
+    background-color: #321515 !important;
+  }
+
+  .bg-gray-200 {
+    background-color: #334139 !important;
+  }
+
+  .text-gray-900,
+  .text-gray-800,
+  .text-gray-700,
+  .text-neutral-900,
+  .text-neutral-700,
+  .text-black {
+    color: #f3f4f6 !important;
+  }
+
+  .text-gray-600,
+  .text-gray-500,
+  .text-gray-400 {
+    color: #c4cec8 !important;
+  }
+
+  .text-neutral-600 {
+    color: #c4cec8 !important;
+  }
+
+  .text-green-800,
+  .text-green-900,
+  .text-green-950 {
+    color: #86efac !important;
+  }
+
+  .text-amber-950 {
+    color: #fde68a !important;
+  }
+
+  .text-amber-900,
+  .text-amber-800 {
+    color: #fcd34d !important;
+  }
+
+  .text-red-900,
+  .text-red-800 {
+    color: #fecaca !important;
+  }
+
+  .text-red-700 {
+    color: #fca5a5 !important;
+  }
+
+  .border,
+  .border-t,
+  .border-b,
+  .border-green-200,
+  .border-amber-300,
+  .border-red-200 {
+    border-color: #3c5044 !important;
+  }
+
+  .border-gray-200,
+  .border-gray-300,
+  .border-amber-200,
+  .border-red-300 {
+    border-color: #53665a !important;
+  }
+
+  input,
+  select,
+  textarea {
+    border-color: #53665a !important;
+    background-color: #111d16 !important;
+    color: #f8fafc !important;
+    color-scheme: dark;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca9a1 !important;
+  }
+
+  option {
+    background-color: #111d16;
+    color: #f8fafc;
+  }
+
+  .dark-loading-overlay {
+    background-color: rgb(6 13 9 / 78%) !important;
   }
 }
 
@@ -27,4 +136,18 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #4ade80;
+  outline-offset: 2px;
 }

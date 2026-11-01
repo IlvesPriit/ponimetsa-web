@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 import { pool } from "@/lib/db";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import {
+  formatEstonianDate,
+  formatEstonianTime,
+  parseEstonianDate,
+} from "@/lib/estonian-date";
 
 const WEEKDAYS = [
   [1, "Esmaspäev"],
@@ -165,6 +171,45 @@ export default async function AdminTrainingPage({
     refresh("Ratsaniku andmed salvestatud");
   }
 
+  async function archiveRider(formData: FormData) {
+    "use server";
+    const userId = await currentAdminUserId();
+    const id = String(formData.get("id") ?? "");
+    if (!id) throw new Error("Ratsanik on valimata");
+
+    const client = await pool.connect();
+    try {
+      await client.query("begin");
+      const riderRes = await client.query(
+        `update public.riders
+         set active = false, profile_state = 'archived'
+         where id = $1 and active = true
+         returning display_name`,
+        [id]
+      );
+      if (riderRes.rowCount !== 1) throw new Error("Ratsanikku ei leitud");
+      await client.query(
+        `update public.training_group_memberships
+         set status = 'inactive', ends_on = coalesce(ends_on, current_date)
+         where rider_id = $1 and status <> 'inactive'`,
+        [id]
+      );
+      await client.query(
+        `insert into public.training_audit_log
+           (actor_user_id, entity_type, entity_id, action, details)
+         values ($1, 'rider', $2, 'archived', jsonb_build_object('display_name', $3::text))`,
+        [userId, id, riderRes.rows[0].display_name]
+      );
+      await client.query("commit");
+    } catch (error) {
+      await client.query("rollback");
+      throw error;
+    } finally {
+      client.release();
+    }
+    refresh("Ratsanik eemaldatud ja tema püsiajad lõpetatud");
+  }
+
   async function createGroup(formData: FormData) {
     "use server";
     await currentAdminUserId();
@@ -293,14 +338,31 @@ export default async function AdminTrainingPage({
     refresh("Püsiaja olek muudetud");
   }
 
+  async function confirmGroupSuggestions(formData: FormData) {
+    "use server";
+    await currentAdminUserId();
+    const slotId = String(formData.get("slot_id") ?? "");
+    if (!slotId) throw new Error("Grupp on valimata");
+    const result = await pool.query(
+      `update public.training_group_memberships
+       set status = 'active', confidence = 'confirmed', source = 'admin_bulk_confirmed',
+           starts_on = coalesce(starts_on, current_date)
+       where slot_id = $1 and status = 'suggested'`,
+      [slotId]
+    );
+    const count = result.rowCount ?? 0;
+    refresh(count ? `${count} grupiliiget kinnitatud` : "Sellel grupil ei olnud kinnitamata soovitusi");
+  }
+
   async function createSession(formData: FormData) {
     "use server";
     const userId = await currentAdminUserId();
     const slotId = String(formData.get("slot_id") ?? "");
-    const sessionDate = String(formData.get("session_date") ?? "");
-    if (!slotId || !/^\d{4}-\d{2}-\d{2}$/.test(sessionDate)) throw new Error("Trenni kuupäev on vigane");
+    const sessionDate = parseEstonianDate(formData.get("session_date"), "Trenni kuupäev");
+    if (!slotId) throw new Error("Püsiaeg on valimata");
 
     const client = await pool.connect();
+    let created = false;
     try {
       await client.query("begin");
       const sessionRes = await client.query(
@@ -313,23 +375,30 @@ export default async function AdminTrainingPage({
          from public.training_group_slots s
          join public.training_groups g on g.id = s.group_id
          where s.id = $1
+           and not exists (
+             select 1 from public.training_sessions existing
+             where existing.slot_id = s.id
+               and (existing.starts_at at time zone s.timezone)::date = $2::date
+           )
          returning id`,
         [slotId, sessionDate, userId]
       );
-      if (sessionRes.rowCount !== 1) throw new Error("Püsiaega ei leitud");
-      const sessionId = sessionRes.rows[0].id;
-      await client.query(
-        `insert into public.training_bookings
-           (session_id, rider_id, booking_kind, status, source, created_by, updated_by)
-         select $1, m.rider_id, 'recurring', 'confirmed', 'active_membership', $2, $2
-         from public.training_group_memberships m
-         where m.slot_id = $3
-           and m.status = 'active'
-           and (m.starts_on is null or m.starts_on <= $4::date)
-           and (m.ends_on is null or m.ends_on >= $4::date)
-         on conflict (session_id, rider_id) do nothing`,
-        [sessionId, userId, slotId, sessionDate]
-      );
+      if (sessionRes.rowCount === 1) {
+        created = true;
+        const sessionId = sessionRes.rows[0].id;
+        await client.query(
+          `insert into public.training_bookings
+             (session_id, rider_id, booking_kind, status, source, created_by, updated_by)
+           select $1, m.rider_id, 'recurring', 'confirmed', 'active_membership', $2, $2
+           from public.training_group_memberships m
+           where m.slot_id = $3
+             and m.status = 'active'
+             and (m.starts_on is null or m.starts_on <= $4::date)
+             and (m.ends_on is null or m.ends_on >= $4::date)
+           on conflict (session_id, rider_id) do nothing`,
+          [sessionId, userId, slotId, sessionDate]
+        );
+      }
       await client.query("commit");
     } catch (error) {
       await client.query("rollback");
@@ -337,21 +406,91 @@ export default async function AdminTrainingPage({
     } finally {
       client.release();
     }
-    refresh("Kalendritrenn loodud");
+    refresh(created ? "Kalendritrenn loodud" : "Selle grupi trenn oli valitud kuupäeval juba olemas");
+  }
+
+  async function generateSessions(formData: FormData) {
+    "use server";
+    const userId = await currentAdminUserId();
+    const startDate = parseEstonianDate(formData.get("start_date"), "Alguskuupäev");
+    const weeks = asPositiveInt(formData.get("weeks"), "Nädalate arv");
+    if (weeks > 26) throw new Error("Korraga saab luua kuni 26 nädala trennid");
+
+    const client = await pool.connect();
+    let createdCount = 0;
+    try {
+      await client.query("begin");
+      const result = await client.query<{ created_count: number }>(
+        `with candidates as (
+           select g.id as group_id, g.name, g.format, g.default_capacity,
+                  s.id as slot_id, s.start_time, s.duration_minutes, s.timezone,
+                  s.capacity_override, day_value::date as session_date
+           from public.training_group_slots s
+           join public.training_groups g on g.id = s.group_id and g.active = true
+           cross join lateral generate_series(
+             $1::date,
+             $1::date + ($2::int * 7 - 1),
+             interval '1 day'
+           ) as calendar(day_value)
+           where s.active = true
+             and extract(isodow from day_value)::int = s.weekday
+         ), created as (
+           insert into public.training_sessions
+             (group_id, slot_id, title, format, starts_at, ends_at, capacity, created_by, updated_by)
+           select c.group_id, c.slot_id, c.name, c.format,
+                  ((c.session_date + c.start_time) at time zone c.timezone),
+                  ((c.session_date + c.start_time) at time zone c.timezone)
+                    + make_interval(mins => c.duration_minutes),
+                  coalesce(c.capacity_override, c.default_capacity), $3, $3
+           from candidates c
+           where not exists (
+             select 1
+             from public.training_sessions existing
+             where existing.slot_id = c.slot_id
+               and (existing.starts_at at time zone c.timezone)::date = c.session_date
+           )
+           returning id, slot_id, starts_at
+         ), booked as (
+           insert into public.training_bookings
+             (session_id, rider_id, booking_kind, status, source, created_by, updated_by)
+           select c.id, m.rider_id, 'recurring', 'confirmed', 'active_membership', $3, $3
+           from created c
+           join public.training_group_slots s on s.id = c.slot_id
+           join public.training_group_memberships m on m.slot_id = c.slot_id and m.status = 'active'
+           where (m.starts_on is null or m.starts_on <= (c.starts_at at time zone s.timezone)::date)
+             and (m.ends_on is null or m.ends_on >= (c.starts_at at time zone s.timezone)::date)
+           on conflict (session_id, rider_id) do nothing
+           returning id
+         )
+         select count(*)::int as created_count from created`,
+        [startDate, weeks, userId]
+      );
+      createdCount = result.rows[0]?.created_count ?? 0;
+      await client.query("commit");
+    } catch (error) {
+      await client.query("rollback");
+      throw error;
+    } finally {
+      client.release();
+    }
+    refresh(
+      createdCount
+        ? `${createdCount} kalendritrenni loodud`
+        : "Kõik selle ajavahemiku trennid olid juba olemas"
+    );
   }
 
   async function updateSession(formData: FormData) {
     "use server";
     const userId = await currentAdminUserId();
     const id = String(formData.get("id") ?? "");
-    const sessionDate = String(formData.get("session_date") ?? "");
+    const sessionDate = parseEstonianDate(formData.get("session_date"), "Trenni kuupäev");
     const startTime = asTime(formData.get("start_time"), "Trenni algusaeg");
     const capacity = asPositiveInt(formData.get("capacity"), "Kohtade arv");
     const status = String(formData.get("status") ?? "open");
     const cancellationCreditMode = String(formData.get("cancellation_credit_mode") ?? "none");
     if (
       !id ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(sessionDate) ||
       !["open", "cancelled", "completed"].includes(status) ||
       !["all", "none"].includes(cancellationCreditMode)
     ) {
@@ -442,7 +581,7 @@ export default async function AdminTrainingPage({
        from public.training_sessions ts
        left join public.training_bookings tb on tb.session_id = ts.id
        where ts.starts_at >= now() - interval '1 day'
-       group by ts.id order by ts.starts_at limit 60`
+       group by ts.id order by ts.starts_at limit 180`
     ),
   ]);
 
@@ -452,7 +591,7 @@ export default async function AdminTrainingPage({
   const groups = groupRes.rows as GroupRow[];
   const memberships = membershipRes.rows as MembershipRow[];
   const sessions = sessionRes.rows as SessionRow[];
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Tallinn" }).format(new Date());
+  const today = formatEstonianDate(new Date());
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -502,7 +641,7 @@ export default async function AdminTrainingPage({
             <input name="credit_cutoff_time" type="time" defaultValue={String(policy.credit_cutoff_time).slice(0, 5)} className="mt-1 w-full rounded-xl border px-3 py-2" />
           </label>
           <div className="flex items-end">
-            <button className="w-full rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Salvesta reeglid</button>
+            <SubmitButton pendingLabel="Salvestan…" className="w-full rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Salvesta reeglid</SubmitButton>
           </div>
         </form>
       </section>
@@ -514,7 +653,7 @@ export default async function AdminTrainingPage({
           <select name="level_id" defaultValue="0" className="rounded-xl border px-3 py-2">
             {levels.map((level) => <option key={level.id} value={level.id}>{level.label}</option>)}
           </select>
-          <button className="rounded-xl border border-green-800 px-4 py-2 text-sm font-medium text-green-900">Lisa ratsanik</button>
+          <SubmitButton pendingLabel="Lisan…" className="rounded-xl border border-green-800 px-4 py-2 text-sm font-medium text-green-900">Lisa ratsanik</SubmitButton>
         </form>
         <div className="mt-5 max-h-[34rem] overflow-auto rounded-xl border">
           <table className="w-full text-left text-sm">
@@ -523,7 +662,8 @@ export default async function AdminTrainingPage({
               {riders.map((rider) => (
                 <tr key={rider.id} className="border-t">
                   <td colSpan={5} className="p-0">
-                    <form action={updateRider} className="grid grid-cols-[minmax(12rem,1fr)_12rem_11rem_10rem_auto] items-center gap-2 px-3 py-2">
+                    <div className="grid grid-cols-[minmax(12rem,1fr)_12rem_11rem_10rem_auto_auto] items-center gap-2 px-3 py-2">
+                    <form action={updateRider} className="contents">
                       <input type="hidden" name="id" value={rider.id} />
                       <input name="display_name" defaultValue={rider.display_name} className="rounded-lg border px-2 py-1.5" />
                       <select name="level_id" defaultValue={rider.level_id} className="rounded-lg border px-2 py-1.5">
@@ -533,8 +673,19 @@ export default async function AdminTrainingPage({
                         <option value="basic">Algeline</option><option value="complete">Täidetud</option><option value="needs_merge">Kontrolli nime</option><option value="archived">Arhiveeritud</option>
                       </select>
                       <span className="truncate text-xs text-gray-500">{rider.source}</span>
-                      <button className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta</button>
+                      <SubmitButton pendingLabel="Salvestan…" className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta</SubmitButton>
                     </form>
+                    <form action={archiveRider}>
+                      <input type="hidden" name="id" value={rider.id} />
+                      <SubmitButton
+                        pendingLabel="Eemaldan…"
+                        confirmMessage={`Kas eemaldada ratsanik ${rider.display_name}? Ajalugu säilib, kuid tema püsiajad lõpetatakse.`}
+                        className="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700"
+                      >
+                        Eemalda
+                      </SubmitButton>
+                    </form>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -553,7 +704,7 @@ export default async function AdminTrainingPage({
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border px-3 py-2">
             {levels.filter((level) => level.id > 0).map((level) => <label key={level.id} className="text-xs"><input type="checkbox" name="level_ids" value={level.id} className="mr-1" />{level.label}</label>)}
           </div>
-          <button className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Lisa grupp</button>
+          <SubmitButton pendingLabel="Lisan…" className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Lisa grupp</SubmitButton>
         </form>
         <div className="mt-6 space-y-3">
           {groups.map((group) => (
@@ -569,7 +720,7 @@ export default async function AdminTrainingPage({
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 {levels.filter((level) => level.id > 0).map((level) => <label key={level.id} className="text-xs"><input type="checkbox" name="level_ids" value={level.id} defaultChecked={(group.level_ids ?? []).includes(level.id)} className="mr-1" />{level.label}</label>)}
                 <span className="ml-auto text-xs text-gray-500">Aktiivseid püsiliikmeid: {group.active_members} · {group.classification_status === "classified" ? "tasemed määratud" : "tasemed määramata"}</span>
-                <button className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta grupp</button>
+                <SubmitButton pendingLabel="Salvestan…" className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta grupp</SubmitButton>
               </div>
             </form>
           ))}
@@ -582,7 +733,23 @@ export default async function AdminTrainingPage({
           <select name="rider_id" className="min-w-64 flex-1 rounded-xl border px-3 py-2">{riders.map((rider) => <option key={rider.id} value={rider.id}>{rider.display_name}</option>)}</select>
           <select name="slot_id" className="min-w-56 rounded-xl border px-3 py-2">{groups.map((group) => <option key={group.slot_id} value={group.slot_id}>{group.name}</option>)}</select>
           <select name="status" defaultValue="active" className="rounded-xl border px-3 py-2"><option value="active">Aktiivne püsiaeg</option><option value="suggested">Soovitus</option></select>
-          <button className="rounded-xl border border-green-800 px-4 py-2 text-sm font-medium text-green-900">Lisa püsiaeg</button>
+          <SubmitButton pendingLabel="Lisan…" className="rounded-xl border border-green-800 px-4 py-2 text-sm font-medium text-green-900">Lisa püsiaeg</SubmitButton>
+        </form>
+        <form action={confirmGroupSuggestions} className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <div className="min-w-56 flex-1">
+            <p className="text-sm font-medium text-amber-950">Kinnita ajaloo põhjal leitud püsiajad grupi kaupa</p>
+            <p className="mt-0.5 text-xs text-amber-900">Kontrolli allolevat nimekirja ning kinnita ainult sobiva grupi soovitused.</p>
+          </div>
+          <select name="slot_id" className="min-w-56 rounded-xl border px-3 py-2">
+            {groups.map((group) => <option key={group.slot_id} value={group.slot_id}>{group.name}</option>)}
+          </select>
+          <SubmitButton
+            pendingLabel="Kinnitan…"
+            confirmMessage="Kas kinnitada selle grupi kõik soovitatud püsiliikmed?"
+            className="rounded-xl border border-amber-700 px-4 py-2 text-sm font-medium text-amber-950"
+          >
+            Kinnita grupi soovitused
+          </SubmitButton>
         </form>
         <div className="mt-5 max-h-[32rem] overflow-auto rounded-xl border">
           <table className="w-full text-left text-sm">
@@ -590,7 +757,7 @@ export default async function AdminTrainingPage({
             <tbody>{memberships.map((membership) => (
               <tr key={membership.id} className="border-t">
                 <td className="px-3 py-2 font-medium">{membership.rider_name}</td><td className="px-3 py-2">{membership.group_name}</td><td className="px-3 py-2 text-gray-600">{membership.confidence}</td>
-                <td colSpan={2} className="px-3 py-2"><form action={updateMembership} className="flex gap-2"><input type="hidden" name="id" value={membership.id} /><select name="status" defaultValue={membership.status} className="rounded-lg border px-2 py-1"><option value="suggested">Soovitus</option><option value="active">Aktiivne</option><option value="inactive">Mitteaktiivne</option></select><button className="rounded-lg border px-3 py-1 text-xs font-medium">Salvesta</button></form></td>
+                <td colSpan={2} className="px-3 py-2"><form action={updateMembership} className="flex gap-2"><input type="hidden" name="id" value={membership.id} /><select name="status" defaultValue={membership.status} className="rounded-lg border px-2 py-1"><option value="suggested">Soovitus</option><option value="active">Aktiivne</option><option value="inactive">Mitteaktiivne</option></select><SubmitButton pendingLabel="Salvestan…" className="rounded-lg border px-3 py-1 text-xs font-medium">Salvesta</SubmitButton></form></td>
               </tr>
             ))}</tbody>
           </table>
@@ -599,24 +766,48 @@ export default async function AdminTrainingPage({
 
       <section className="mt-8 rounded-2xl border p-6">
         <h2 className="text-xl font-semibold">Kalendritrennid</h2>
-        <p className="mt-1 text-sm text-gray-600">Uue trenni loomisel lisatakse kinnitatud püsigrupi liikmed automaatselt.</p>
+        <p className="mt-1 text-sm text-gray-600">Loomisel lisatakse aktiivsed püsigrupi liikmed automaatselt. Juba olemasolevaid trenne ei dubleerita.</p>
+
+        <form action={generateSessions} className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="min-w-56 flex-1">
+              <p className="font-medium text-green-950">Loo trennid kogu püsigraafikust</p>
+              <p className="mt-1 text-xs text-green-900">Kõik aktiivsed grupid valitud ajavahemikuks ühe korraga.</p>
+            </div>
+            <label className="text-sm">
+              <span className="font-medium">Alates</span>
+              <input name="start_date" type="text" inputMode="numeric" pattern="\d{2}/\d{2}/\d{4}" placeholder="pp/kk/aaaa" defaultValue={today} className="mt-1 w-40 rounded-xl border px-3 py-2" required />
+            </label>
+            <label className="text-sm">
+              <span className="font-medium">Nädalaid</span>
+              <select name="weeks" defaultValue="8" className="mt-1 w-28 rounded-xl border px-3 py-2">
+                <option value="4">4</option><option value="8">8</option><option value="12">12</option><option value="16">16</option><option value="26">26</option>
+              </select>
+            </label>
+            <SubmitButton pendingLabel="Loon trenne…" className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Loo püsigraafikust</SubmitButton>
+          </div>
+        </form>
+
+        <details className="mt-4 rounded-xl border p-4">
+          <summary className="cursor-pointer text-sm font-medium">Loo üksik trenn käsitsi</summary>
         <form action={createSession} className="mt-4 flex flex-wrap gap-3">
           <select name="slot_id" className="min-w-64 flex-1 rounded-xl border px-3 py-2">{groups.filter((group) => group.active).map((group) => <option key={group.slot_id} value={group.slot_id}>{group.name}</option>)}</select>
-          <input name="session_date" type="date" defaultValue={today} className="rounded-xl border px-3 py-2" required />
-          <button className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Loo kalendritrenn</button>
+          <input name="session_date" type="text" inputMode="numeric" pattern="\d{2}/\d{2}/\d{4}" placeholder="pp/kk/aaaa" defaultValue={today} className="w-40 rounded-xl border px-3 py-2" required />
+          <SubmitButton pendingLabel="Loon…" className="rounded-xl bg-green-800 px-4 py-2 text-sm font-medium text-white">Loo kalendritrenn</SubmitButton>
         </form>
+        </details>
         <div className="mt-5 space-y-2">
           {sessions.map((session) => {
             const starts = new Date(session.starts_at);
-            const localDate = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Tallinn" }).format(starts);
-            const localTime = starts.toLocaleTimeString("et-EE", { timeZone: "Europe/Tallinn", hour: "2-digit", minute: "2-digit", hour12: false });
+            const localDate = formatEstonianDate(starts);
+            const localTime = formatEstonianTime(starts);
             return (
               <form key={session.id} action={updateSession} className="grid items-center gap-2 rounded-xl border p-3 lg:grid-cols-[1fr_10rem_8rem_6rem_9rem_12rem_auto]">
                 <input type="hidden" name="id" value={session.id} /><div><div className="font-medium">{session.title}</div><div className="text-xs text-gray-500">Kirjas {session.riders}/{session.capacity}</div></div>
-                <input name="session_date" type="date" defaultValue={localDate} className="rounded-lg border px-2 py-1.5" /><input name="start_time" type="time" defaultValue={localTime} className="rounded-lg border px-2 py-1.5" /><input name="capacity" type="number" min="1" defaultValue={session.capacity} className="rounded-lg border px-2 py-1.5" />
+                <input name="session_date" type="text" inputMode="numeric" pattern="\d{2}/\d{2}/\d{4}" aria-label="Trenni kuupäev pp/kk/aaaa" defaultValue={localDate} className="rounded-lg border px-2 py-1.5" /><input name="start_time" type="time" defaultValue={localTime} className="rounded-lg border px-2 py-1.5" /><input name="capacity" type="number" min="1" defaultValue={session.capacity} className="rounded-lg border px-2 py-1.5" />
                 <select name="status" defaultValue={session.status} className="rounded-lg border px-2 py-1.5"><option value="open">Avatud</option><option value="completed">Toimunud</option><option value="cancelled">Tühistatud</option></select>
                 <select name="cancellation_credit_mode" defaultValue={session.cancellation_credit_mode ?? "none"} className="rounded-lg border px-2 py-1.5" title="Rakendub siis, kui trenn märgitakse tühistatuks"><option value="none">Tühistamisel: krediiti ei saa</option><option value="all">Tühistamisel: krediit kõigile</option></select>
-                <button className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta</button>
+                <SubmitButton pendingLabel="Salvestan…" className="rounded-lg border px-3 py-1.5 text-xs font-medium">Salvesta</SubmitButton>
               </form>
             );
           })}

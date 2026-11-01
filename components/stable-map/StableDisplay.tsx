@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { StableMapDocument } from "@/types/stable-map";
 import StableMap from "./StableMap";
 import styles from "./StableDisplay.module.css";
+import { formatEstonianDateTime } from "@/lib/estonian-date";
 
 type Props = { initialMap: StableMapDocument; initialPublishedAt: string | null };
 
@@ -47,7 +48,7 @@ export default function StableDisplay({ initialMap, initialPublishedAt }: Props)
     <main className={styles.screen}>
       <StableMap map={map} className={styles.map} />
       {offline ? <div className={styles.offline}>Ühendus katkes – kuvatakse viimast teadaolevat kaarti</div> : null}
-      <div className={styles.stamp}>{publishedAt ? `Uuendatud ${new Date(publishedAt).toLocaleString("et-EE", { dateStyle: "short", timeStyle: "short" })}` : "Avaldamist ootav kopliplaan"}</div>
+      <div className={styles.stamp}>{publishedAt ? `Uuendatud ${formatEstonianDateTime(publishedAt)}` : "Avaldamist ootav kopliplaan"}</div>
     </main>
   );
 }

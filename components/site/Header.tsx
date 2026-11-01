@@ -29,7 +29,7 @@ export function Header() {
           */}
           <Link href="/about" className="hover:underline">Meist</Link>
           <Link href="/contact" className="hover:underline">Kontakt</Link>
-          <Link href="/minu-trennid" className="font-medium text-green-800 hover:underline">Minu trennid</Link>
+          <Link href="/login" className="font-medium text-green-800 hover:underline">Sisene</Link>
           {/*
           <Link href="/mkrosetid" className="hover:underline">MK rosetid</Link>
           */}
@@ -54,7 +54,7 @@ export function Header() {
             */}
             <Link href="/about" onClick={() => setOpen(false)}>Meist</Link>
             <Link href="/contact" onClick={() => setOpen(false)}>Kontakt</Link>
-            <Link href="/minu-trennid" className="font-medium text-green-800" onClick={() => setOpen(false)}>Minu trennid</Link>
+            <Link href="/login" className="font-medium text-green-800" onClick={() => setOpen(false)}>Sisene</Link>
             {/*
             <Link href="/mkrosetid" onClick={() => setOpen(false)}>MK rosetid</Link>
             */}

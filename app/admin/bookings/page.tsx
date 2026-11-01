@@ -4,6 +4,7 @@ import { pool } from "../../../lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../lib/admin";
+import { formatEstonianDate, formatEstonianDateTime, formatEstonianRange, formatEstonianTime } from "@/lib/estonian-date";
 
 
 
@@ -64,19 +65,7 @@ async function sendEmail(args: SendEmailArgs) {
 
 function fmtEtRange(start?: Date | null, end?: Date | null) {
   if (!start) return "";
-  const d = start.toLocaleDateString("et-EE");
-  const t1 = start.toLocaleTimeString("et-EE", {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  if (!end) return `${d} ${t1}`;
-  const t2 = end.toLocaleTimeString("et-EE", {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return `${d} ${t1}–${t2}`;
+  return formatEstonianRange(start, end);
 }
 
 export default async function AdminBookingsPage() {
@@ -310,7 +299,7 @@ if (status === "confirmed") {
               return (
                 <tr key={b.id} className="border-t">
                   <td className="px-4 py-3 text-gray-700">
-                    {new Date(b.created_at).toLocaleString("et-EE")}
+                    {formatEstonianDateTime(b.created_at)}
                   </td>
 
                   <td className="px-4 py-3">
@@ -323,18 +312,12 @@ if (status === "confirmed") {
                     {start ? (
                       <div>
                         <div className="font-medium text-gray-900">
-                          {new Date(start).toLocaleDateString("et-EE")}
+                          {formatEstonianDate(start)}
                         </div>
                         <div className="text-gray-600">
-                          {new Date(start).toLocaleTimeString("et-EE", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {formatEstonianTime(start)}
                           {end
-                            ? ` – ${new Date(end).toLocaleTimeString("et-EE", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}`
+                            ? `–${formatEstonianTime(end)}`
                             : ""}
                         </div>
 
