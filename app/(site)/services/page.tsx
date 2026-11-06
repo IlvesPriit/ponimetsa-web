@@ -139,7 +139,7 @@ const sections: PriceSection[] = [
         unit: "/päev",
         note: "Pikema perioodi vältel kokkuleppel.",
       },
-      //{ label: "Maneeži kasutus külalisele", price: "25€", unit: "/tund", note: "Kuni 2 hobust." },
+      { label: "Maneeži kasutus külalisele", price: "25€", unit: "/tund", note: "Kuni 2 hobust, iga järgnev hohube +10€" },
     ],
   },
   {
