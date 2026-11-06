@@ -139,12 +139,13 @@ const sections: PriceSection[] = [
         unit: "/päev",
         note: "Pikema perioodi vältel kokkuleppel.",
       },
-      { label: "Maneeži kasutus külalisele", price: "25€", unit: "/tund", note: "Kuni 2 hobust, iga järgnev hohube +10€" },
+      
     ],
   },
   {
     title: "Muud teenused",
     rows: [
+      { label: "Maneeži kasutus külalisele", price: "25€", unit: "/tund", note: "Kuni 2 hobust, iga järgnev hohube +10€" },
       { label: "Hobuse sõitmine", price: "25€", unit: "/kord", note: "Pikema perioodi vältel kokkuleppel." },
       { label: "Treileri rent", price: "40€", unit: "/ööpäev" },
       {
